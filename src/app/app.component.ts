@@ -1,13 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { Repo } from './model/repo';
+import { RepoService } from './model/repo.service';
+import { AsyncPipe, NgForOf } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, NgForOf, AsyncPipe],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'm306-TouGH-Vault-github-backupper-frontend';
+  protected readonly of = of;
+  private readonly repoService: RepoService = inject(RepoService);
+  $repos: Observable<Repo[]> = this.repoService.getAll();
 }
