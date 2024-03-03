@@ -1,19 +1,16 @@
 import { Component, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { Repo } from './model/repo';
-import { RepoService } from './model/repo.service';
-import { AsyncPipe, NgForOf } from '@angular/common';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, NgForOf, AsyncPipe],
+  selector: 'tghv-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  protected readonly of = of;
-  private readonly repoService: RepoService = inject(RepoService);
-  $repos: Observable<Repo[]> = this.repoService.getAll();
+
+  private readonly oidcSecurityService = inject(OidcSecurityService);
+
+  logout() {
+    this.oidcSecurityService.logoff().subscribe((result) => console.log(result));
+  }
 }
