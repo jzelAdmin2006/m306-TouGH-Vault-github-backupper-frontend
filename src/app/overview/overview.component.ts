@@ -15,20 +15,20 @@ export class OverviewComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await firstValueFrom(
-        this.repoService.getAll().pipe( // TODO search by account / email
-            catchError((err) => {
-              if (err.status === 404) {
-                window.location.href = environment.installationUrl;
-                return [];
-              } else {
-                console.log(err);
-                throw err;
-              }
-            }),
-            tap((repos) => {
-              this.repos = repos;
-            })
-        )
+      this.repoService.getAll().pipe( // TODO get repos every few seconds, update the isProtecting values only if the fetch time has been changed
+        catchError((err) => {
+          if (err.status === 404) {
+            window.location.href = environment.installationUrl;
+            return [];
+          } else {
+            console.log(err);
+            throw err;
+          }
+        }),
+        tap((repos) => {
+          this.repos = repos;
+        })
+      )
     );
   }
 }

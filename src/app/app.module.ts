@@ -20,6 +20,7 @@ import { AppComponent } from './app.component';
 import { AuthConfigModule } from './auth/auth-config.module';
 import { OverviewComponent } from './overview/overview.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ProtectionStatePipe } from './pipe/protection-state.pipe';
 
 @NgModule({
   declarations: [AppComponent, OverviewComponent],
@@ -42,6 +43,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatRadioModule,
     NgOptimizedImage,
     MatCheckboxModule,
+    ProtectionStatePipe,
   ],
   providers: [
     Title,
