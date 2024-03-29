@@ -18,7 +18,7 @@ export class OverviewComponent implements OnInit {
       this.repoService.getAll().pipe( // TODO get repos every few seconds, update the isProtecting values only if the fetch time has been changed
         catchError((err) => {
           if (err.status === 404) {
-            window.location.href = environment.installationUrl;
+            window.location.href = environment.authInitUrl;
             return [];
           } else {
             console.log(err);

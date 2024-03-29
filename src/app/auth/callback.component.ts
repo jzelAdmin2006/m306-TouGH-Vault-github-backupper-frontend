@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { map, mergeMap, Observable, take } from 'rxjs';
+import { catchError, map, mergeMap, Observable, take } from 'rxjs';
 import { HttpOptions } from '../adapter/model';
 import { environment } from '../../environments/environment';
 
@@ -15,7 +15,6 @@ import { environment } from '../../environments/environment';
 })
 export class CallbackComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly oidcSecurityService = inject(OidcSecurityService);
   private readonly http = inject(HttpClient);
 
@@ -30,12 +29,23 @@ export class CallbackComponent implements OnInit {
 
   public invokeCallback(code: String): void {
     this.getHttpOptions().pipe(
-        mergeMap(options => {
-          const params = new HttpParams().set('code', code.toString() || '');
-          return this.http.get<void>(environment.apiUrl + '/auth/callback', { ...options, params });
-        }),
-        take(1),
-    ).subscribe(code => {
+      mergeMap(options => {
+        const params = new HttpParams().set('code', code.toString() || '');
+        return this.http.get<void>(environment.apiUrl + '/auth/callback', { ...options, params, observe: 'response' });
+      }),
+      take(1),
+      catchError((error) => {
+        switch (error.status) {
+          case 401:
+            this.sendHome();
+            break;
+          case 428:
+            window.location.href = environment.installationUrl;
+            break;
+        }
+        throw error;
+      }),
+    ).subscribe(() => {
       this.sendHome();
     });
   }
@@ -44,11 +54,11 @@ export class CallbackComponent implements OnInit {
     const accessToken = this.oidcSecurityService.getAccessToken();
     if (accessToken) {
       return accessToken.pipe(
-          map((token) => ({
-            headers: new HttpHeaders()
-                .set('Content-Type', 'application/json')
-                .set('Authorization', 'Bearer ' + token),
-          })),
+        map((token) => ({
+          headers: new HttpHeaders()
+            .set('Content-Type', 'application/json')
+            .set('Authorization', 'Bearer ' + token),
+        })),
       );
     } else {
       this.sendHome();
