@@ -1,0 +1,40 @@
+.table-wrapper {
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid black;
+  width: 60%;
+  margin: 0 auto;
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+
+      &:first-child {
+        border-left: none;
+      }
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+
+    th {
+      height: 2em;
+      font-size: 1.5em;
+    }
+
+    tr {
+      &:first-child th {
+        border-top: none;
+      }
+
+      &:last-child td {
+        border-bottom: none;
+      }
+    }
+  }
+}

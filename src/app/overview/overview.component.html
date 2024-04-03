@@ -1,6 +1,12 @@
-<div>
-  <h1>Names:</h1>
-  <p *ngFor="let repo of repos">
-    {{ repo.name }} ({{ repo | protectionState }})
-  </p>
+<div class="table-wrapper">
+  <table>
+    <tr>
+      <th *ngFor="let header of columnHeaders"
+          [ngStyle]="{'width': 100 / this.columnHeaders.length + '%' }">{{ header }}
+      </th>
+    </tr>
+    <tr *ngFor="let repo of repos">
+      <td [attr.colspan]="columnHeaders.length">{{ repo.name }} {{ repo | protectionState }}</td>
+    </tr>
+  </table>
 </div>

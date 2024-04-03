@@ -1,7 +1,7 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { RepoService } from '../model/repo.service';
 import { Repo } from '../model/repo';
-import { catchError, switchMap, startWith, tap } from 'rxjs/operators';
+import { catchError, startWith, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { interval, Subscription } from 'rxjs';
 
@@ -12,6 +12,7 @@ import { interval, Subscription } from 'rxjs';
 })
 export class OverviewComponent implements OnInit, OnDestroy {
   repos: Repo[] = [];
+  columnHeaders = ['All', 'Unprotected', 'Protected', 'Rescued'];
   private readonly repoService: RepoService = inject(RepoService);
   private subscription: Subscription = new Subscription();
 
