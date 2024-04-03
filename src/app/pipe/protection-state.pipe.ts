@@ -3,15 +3,21 @@ import { Repo } from '../model/repo';
 
 @Pipe({
   name: 'protectionState',
-  standalone: true
+  standalone: true,
 })
 export class ProtectionStatePipe implements PipeTransform {
-  private static readonly STATES = new Map<string, (repo: Repo) => boolean | null>([
+  private static readonly STATES = new Map<
+    string,
+    (repo: Repo) => boolean | null
+  >([
     ['Protecting...', (r) => r.isProtecting],
     ['Unprotected', (r) => r.latestFetch === null],
     ['Rescued', (r) => r.latestPush === null],
     ['Protected', (r) => r.latestPush === r.latestFetch],
-    ['Partially protected', (r) => r.latestPush && r.latestFetch && r.latestPush > r.latestFetch]
+    [
+      'Partially protected',
+      (r) => r.latestPush && r.latestFetch && r.latestPush > r.latestFetch,
+    ],
   ]);
 
   transform(repo: Repo): string {

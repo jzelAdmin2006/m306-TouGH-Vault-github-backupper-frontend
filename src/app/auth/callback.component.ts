@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment';
   standalone: true,
   imports: [],
   templateUrl: './callback.component.html',
-  styleUrl: './callback.component.scss'
+  styleUrl: './callback.component.scss',
 })
 export class CallbackComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -28,26 +28,32 @@ export class CallbackComponent implements OnInit {
   }
 
   public invokeCallback(code: String): void {
-    this.getHttpOptions().pipe(
-      mergeMap(options => {
-        const params = new HttpParams().set('code', code.toString() || '');
-        return this.http.get<void>(environment.apiUrl + '/auth/callback', { ...options, params, observe: 'response' });
-      }),
-      take(1),
-      catchError((error) => {
-        switch (error.status) {
-          case 401:
-            this.sendHome();
-            break;
-          case 428:
-            window.location.href = environment.installationUrl;
-            break;
-        }
-        throw error;
-      }),
-    ).subscribe(() => {
-      this.sendHome();
-    });
+    this.getHttpOptions()
+      .pipe(
+        mergeMap((options) => {
+          const params = new HttpParams().set('code', code.toString() || '');
+          return this.http.get<void>(environment.apiUrl + '/auth/callback', {
+            ...options,
+            params,
+            observe: 'response',
+          });
+        }),
+        take(1),
+        catchError((error) => {
+          switch (error.status) {
+            case 401:
+              this.sendHome();
+              break;
+            case 428:
+              window.location.href = environment.installationUrl;
+              break;
+          }
+          throw error;
+        }),
+      )
+      .subscribe(() => {
+        this.sendHome();
+      });
   }
 
   private getHttpOptions(): Observable<HttpOptions> {

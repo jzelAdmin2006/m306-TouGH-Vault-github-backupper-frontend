@@ -8,10 +8,9 @@ describe('CallbackComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CallbackComponent]
-    })
-    .compileComponents();
-    
+      imports: [CallbackComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(CallbackComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

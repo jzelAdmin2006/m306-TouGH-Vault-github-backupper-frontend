@@ -1,1 +1,1 @@
-describe('OverviewComponent', () => { });
+describe('OverviewComponent', () => {});

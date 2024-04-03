@@ -1,14 +1,19 @@
 <div class="table-wrapper">
   <table>
     <tr>
-      <th (click)="applyFilter(header)"
-          *ngFor="let header of columnHeaders"
-          [class.selected]="header === currentFilter"
-          [ngStyle]="{'width': 100 / this.columnHeaders.length + '%' }">{{ header }}
+      <th
+        (click)="applyFilter(header)"
+        *ngFor="let header of columnHeaders"
+        [class.selected]="header === currentFilter"
+        [ngStyle]="{ width: 100 / this.columnHeaders.length + '%' }"
+      >
+        {{ header }}
       </th>
     </tr>
     <tr *ngFor="let repo of filteredRepos">
-      <td [attr.colspan]="columnHeaders.length">{{ repo.name }} {{ repo | protectionState }}</td>
+      <td [attr.colspan]="columnHeaders.length">
+        {{ repo.name }} {{ repo | protectionState }}
+      </td>
     </tr>
   </table>
 </div>

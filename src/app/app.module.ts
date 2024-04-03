@@ -45,11 +45,8 @@ import { ProtectionStatePipe } from './pipe/protection-state.pipe';
     MatCheckboxModule,
     ProtectionStatePipe,
   ],
-  providers: [
-    Title,
-  ],
+  providers: [Title],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule {
-}
+export class AppModule {}

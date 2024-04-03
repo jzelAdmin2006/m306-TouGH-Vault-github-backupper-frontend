@@ -15,7 +15,9 @@ export class RepoRestService {
 
   public getAll(): Observable<Repo[]> {
     return this.getHttpOptions().pipe(
-      mergeMap((options) => this.http.get<Repo[]>(environment.apiUrl + '/repo', options)),
+      mergeMap((options) =>
+        this.http.get<Repo[]>(environment.apiUrl + '/repo', options),
+      ),
       take(1),
     );
   }

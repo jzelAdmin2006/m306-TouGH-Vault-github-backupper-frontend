@@ -25,28 +25,30 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private routeParamsSub: Subscription | undefined;
 
   ngOnInit(): void {
-    this.routeParamsSub = this.route.params.subscribe(params => {
+    this.routeParamsSub = this.route.params.subscribe((params) => {
       const filter = params['filter'] || 'All';
       this.applyFilter(filter);
     });
     this.subscription.add(
-      interval(1000).pipe(
-        startWith(0),
-        switchMap(() => this.repoService.getAll()), // TODO update the isProtecting values only if the fetch time has been changed
-        catchError((err) => {
-          if (err.status === 404) {
-            window.location.href = environment.authInitUrl;
-            return [];
-          } else {
-            console.error(err);
-            throw err;
-          }
-        }),
-        tap((repos) => {
-          this.repos = repos;
-          this.applyFilter(this.currentFilter);
-        })
-      ).subscribe()
+      interval(1000)
+        .pipe(
+          startWith(0),
+          switchMap(() => this.repoService.getAll()), // TODO update the isProtecting values only if the fetch time has been changed
+          catchError((err) => {
+            if (err.status === 404) {
+              window.location.href = environment.authInitUrl;
+              return [];
+            } else {
+              console.error(err);
+              throw err;
+            }
+          }),
+          tap((repos) => {
+            this.repos = repos;
+            this.applyFilter(this.currentFilter);
+          }),
+        )
+        .subscribe(),
     );
   }
 
@@ -62,14 +64,21 @@ export class OverviewComponent implements OnInit, OnDestroy {
         this.filteredRepos = this.repos;
         break;
       case 'Unprotected':
-        this.filteredRepos = this.repos.filter(
-          repo => ['Unprotected', 'Partially protected'].includes(this.protectionStatePipe.transform(repo)));
+        this.filteredRepos = this.repos.filter((repo) =>
+          ['Unprotected', 'Partially protected'].includes(
+            this.protectionStatePipe.transform(repo),
+          ),
+        );
         break;
       case 'Protected':
-        this.filteredRepos = this.repos.filter(repo => this.protectionStatePipe.transform(repo) === 'Protected');
+        this.filteredRepos = this.repos.filter(
+          (repo) => this.protectionStatePipe.transform(repo) === 'Protected',
+        );
         break;
       case 'Rescued':
-        this.filteredRepos = this.repos.filter(repo => this.protectionStatePipe.transform(repo) === 'Rescued');
+        this.filteredRepos = this.repos.filter(
+          (repo) => this.protectionStatePipe.transform(repo) === 'Rescued',
+        );
         break;
       default:
         this.filteredRepos = this.repos;

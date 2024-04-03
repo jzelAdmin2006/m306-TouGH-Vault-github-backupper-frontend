@@ -10,14 +10,14 @@ export class AuthGuard {
 
   canActivate(): Observable<boolean> {
     return this.oidcSecurityService.checkAuth().pipe(
-        map(({ isAuthenticated }) => {
-          if (isAuthenticated) {
-            return true;
-          } else {
-            this.login();
-            return false;
-          }
-        }),
+      map(({ isAuthenticated }) => {
+        if (isAuthenticated) {
+          return true;
+        } else {
+          this.login();
+          return false;
+        }
+      }),
     );
   }
 

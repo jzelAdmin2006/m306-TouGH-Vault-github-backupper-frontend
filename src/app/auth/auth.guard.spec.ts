@@ -8,16 +8,21 @@ describe('AuthGuard', () => {
   let oidcSecurityServiceSpy: jasmine.SpyObj<OidcSecurityService>;
 
   beforeEach(() => {
-    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', ['checkAuth', 'authorize']);
+    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [
+      'checkAuth',
+      'authorize',
+    ]);
     TestBed.configureTestingModule({
-      providers: [{ provide: OidcSecurityService, useValue: oidcSecurityServiceSpy }],
+      providers: [
+        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
+      ],
     });
     guard = TestBed.inject(AuthGuard);
   });
 
   it('canActivate is true for authenticated user', (done) => {
     oidcSecurityServiceSpy.checkAuth.and.returnValue(
-        of({ isAuthenticated: true }) as Observable<LoginResponse>,
+      of({ isAuthenticated: true }) as Observable<LoginResponse>,
     );
 
     guard.canActivate().subscribe((result) => {
@@ -28,7 +33,7 @@ describe('AuthGuard', () => {
 
   it('canActivate is false for unauthenticated user', (done) => {
     oidcSecurityServiceSpy.checkAuth.and.returnValue(
-        of({ isAuthenticated: false }) as Observable<LoginResponse>,
+      of({ isAuthenticated: false }) as Observable<LoginResponse>,
     );
 
     guard.canActivate().subscribe((result) => {

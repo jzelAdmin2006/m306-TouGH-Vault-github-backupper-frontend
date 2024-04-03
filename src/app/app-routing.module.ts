@@ -8,9 +8,7 @@ const routes: Routes = [
   {
     path: 'overview',
     component: OverviewComponent,
-    canActivate: [
-      () => inject(AuthGuard).canActivate(),
-    ],
+    canActivate: [() => inject(AuthGuard).canActivate()],
   },
   {
     path: 'callback',
@@ -27,5 +25,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}

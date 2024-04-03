@@ -1,11 +1,16 @@
 <mat-toolbar>
   <a mat-button routerLink="/overview">
-    <img alt='logo' class='logo' src='../assets/icons/logo.svg' width="50px">
+    <img alt="logo" class="logo" src="../assets/icons/logo.svg" width="50px" />
   </a>
-  <span class='toolbar-spacer'></span>
+  <span class="toolbar-spacer"></span>
   <header>TouGH-Vault</header>
-  <button (click)='logout()' id='logoutButton' mat-icon-button>
-    <img [src]="'./assets/icons/logout.svg'" alt='logout' class='logout' matChipAvatar>
+  <button (click)="logout()" id="logoutButton" mat-icon-button>
+    <img
+      [src]="'./assets/icons/logout.svg'"
+      alt="logout"
+      class="logout"
+      matChipAvatar
+    />
   </button>
 </mat-toolbar>
 <router-outlet></router-outlet>
