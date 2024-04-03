@@ -25,6 +25,13 @@
     th {
       height: 2em;
       font-size: 1.5em;
+      cursor: pointer;
+    }
+
+    th.selected {
+      cursor: default;
+      color: white;
+      background-color: #17677C;
     }
 
     tr {

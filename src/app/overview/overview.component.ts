@@ -4,6 +4,8 @@ import { Repo } from '../model/repo';
 import { catchError, startWith, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { interval, Subscription } from 'rxjs';
+import { ProtectionStatePipe } from '../pipe/protection-state.pipe';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'tghv-overview',
@@ -12,11 +14,21 @@ import { interval, Subscription } from 'rxjs';
 })
 export class OverviewComponent implements OnInit, OnDestroy {
   repos: Repo[] = [];
+  filteredRepos: Repo[] = [];
   columnHeaders = ['All', 'Unprotected', 'Protected', 'Rescued'];
+  currentFilter: string = 'All';
   private readonly repoService: RepoService = inject(RepoService);
-  private subscription: Subscription = new Subscription();
+  private readonly subscription: Subscription = new Subscription();
+  private readonly protectionStatePipe = new ProtectionStatePipe();
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private routeParamsSub: Subscription | undefined;
 
   ngOnInit(): void {
+    this.routeParamsSub = this.route.params.subscribe(params => {
+      const filter = params['filter'] || 'All';
+      this.applyFilter(filter);
+    });
     this.subscription.add(
       interval(1000).pipe(
         startWith(0),
@@ -32,6 +44,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
         }),
         tap((repos) => {
           this.repos = repos;
+          this.applyFilter(this.currentFilter);
         })
       ).subscribe()
     );
@@ -39,5 +52,28 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    this.routeParamsSub?.unsubscribe();
+  }
+
+  applyFilter(filter: string): void {
+    this.currentFilter = filter;
+    switch (filter) {
+      case 'All':
+        this.filteredRepos = this.repos;
+        break;
+      case 'Unprotected':
+        this.filteredRepos = this.repos.filter(
+          repo => ['Unprotected', 'Partially protected'].includes(this.protectionStatePipe.transform(repo)));
+        break;
+      case 'Protected':
+        this.filteredRepos = this.repos.filter(repo => this.protectionStatePipe.transform(repo) === 'Protected');
+        break;
+      case 'Rescued':
+        this.filteredRepos = this.repos.filter(repo => this.protectionStatePipe.transform(repo) === 'Rescued');
+        break;
+      default:
+        this.filteredRepos = this.repos;
+    }
+    this.router.navigate(['/overview', filter]);
   }
 }
