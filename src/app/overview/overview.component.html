@@ -1,5 +1,12 @@
-<button (click)="protectAll()" [disabled]="!canProtectAll" class="tough-vault-button" mat-flat-button>Protect
-  everything
+<button (click)="protectAll()"
+        [disabled]="!canProtectAll"
+        class="tough-vault-button" mat-flat-button>
+  Protect everything
+</button>
+<button (click)="scanGHChanges()"
+        [disabled]="!scanInfo?.scanAllowed"
+        class="tough-vault-button" mat-flat-button>
+  Scan for changes <br> on GitHub
 </button>
 <div class="table-wrapper">
   <table>

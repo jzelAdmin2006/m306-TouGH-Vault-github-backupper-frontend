@@ -8,6 +8,8 @@ import { ProtectionStatePipe } from '../pipe/protection-state.pipe';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { BackupService } from '../model/backup.service';
+import { ScanService } from '../model/scan.service';
+import { ScanInfo } from '../model/scan-info';
 
 @Component({
   selector: 'tghv-overview',
@@ -18,8 +20,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
   repos: Repo[] = [];
   filteredRepos: Repo[] = [];
   columnHeaders = ['All', 'Unprotected', 'Protected', 'Rescued'];
-  currentFilter: string = 'All';
-  canProtectAll: boolean = false;
+  currentFilter = 'All';
+  canProtectAll = false;
+  scanInfo: ScanInfo | undefined;
   private readonly repoService = inject(RepoService);
   private readonly backupService = inject(BackupService);
   private readonly subscription = new Subscription();
@@ -28,6 +31,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly oidcSecurityService = inject(OidcSecurityService);
   private routeParamsSub: Subscription | undefined;
+  private scanService = inject(ScanService);
 
   ngOnInit(): void {
     this.routeParamsSub = this.route.params.subscribe((params) => {
@@ -63,6 +67,14 @@ export class OverviewComponent implements OnInit, OnDestroy {
           }),
         )
         .subscribe(),
+    );
+    this.subscription.add(
+      this.scanService.getScanInfo().subscribe((scanInfo) => {
+        this.scanInfo = scanInfo;
+        if (scanInfo.scanAllowedAt && !scanInfo.scanAllowed) {
+          this.scheduleScanPermission(scanInfo.scanAllowedAt);
+        }
+      })
     );
   }
 
@@ -104,16 +116,22 @@ export class OverviewComponent implements OnInit, OnDestroy {
     this.repos.forEach((repo) => {
       if (['Unprotected', 'Partially protected'].includes(this.protectionStatePipe.transform(repo))) {
         repo.isProtecting = true;
-        this.backupService.protectAll().subscribe(() => {
-          repo.isProtecting = false;
-        }, catchError((err) => {
-          if (err.status === 404) {
-            console.log('Redirecting to auth init URL');
-          }
-          throw err;
-        }));
       }
     });
+    this.backupService.protectAll().subscribe();
+  }
+
+  scanGHChanges() {
+    this.scanInfo!.scanAllowed = false;
+    this.scanService.scanGHChanges().subscribe(() => this.scheduleScanPermission(new Date(Date.now() + 5 * 60 * 1000)));
+  }
+
+  private scheduleScanPermission(scanAllowedAt: Date) {
+    setTimeout(() => {
+      if (this.scanInfo) {
+        this.scanInfo.scanAllowed = true;
+      }
+    }, scanAllowedAt.getTime() - Date.now());
   }
 
   private updateCanProtectAll(): void {

@@ -60,7 +60,7 @@ $tough-vault-disabled: #6b939e;
   color: white;
   border: 1px solid black;
   border-radius: 10px;
-  padding: 30px 20px;
+  padding: 35px 20px;
   cursor: pointer;
   font-size: 1.5em;
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -75,5 +75,11 @@ $tough-vault-disabled: #6b939e;
     color: white;
     border: none;
     box-shadow: none;
+  }
+
+  br {
+    content: "";
+    display: block;
+    margin-top: 5px;
   }
 }

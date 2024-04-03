@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { mergeMap, Observable, take } from 'rxjs';
+import { mergeMap, take } from 'rxjs';
 import { Repo } from '../model/repo';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
@@ -12,7 +12,7 @@ export class RepoRestService {
   private readonly http = inject(HttpClient);
   private readonly httpSecurityService = inject(HttpSecurityService);
 
-  public getAll(): Observable<Repo[]> {
+  public getAll() {
     return this.httpSecurityService.getHttpOptions().pipe(
       mergeMap((options) =>
         this.http.get<Repo[]>(environment.apiUrl + '/repo', options),
