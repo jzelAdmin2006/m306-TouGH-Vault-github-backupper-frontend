@@ -35,7 +35,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
       interval(1000)
         .pipe(
           startWith(0),
-          switchMap(() => this.repoService.getAll()), // TODO update the isProtecting values only if the fetch time has been changed
+          switchMap(() => this.repoService.getAll()),
           catchError((err) => {
             switch (err.status) {
               case 404:
@@ -50,7 +50,11 @@ export class OverviewComponent implements OnInit, OnDestroy {
             }
           }),
           tap((repos) => {
-            this.repos = repos;
+            this.repos = repos.map((newRepo) => {
+              const existingRepo = this.repos.find(repo => repo.id === newRepo.id);
+              return existingRepo && existingRepo.latestFetch === newRepo.latestFetch ?
+                { ...newRepo, isProtecting: existingRepo.isProtecting } : newRepo;
+            });
             this.applyFilter(this.currentFilter);
           }),
         )
