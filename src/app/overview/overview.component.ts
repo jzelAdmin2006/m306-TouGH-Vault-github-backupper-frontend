@@ -7,6 +7,7 @@ import { interval, Subscription } from 'rxjs';
 import { ProtectionStatePipe } from '../pipe/protection-state.pipe';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { BackupService } from '../model/backup.service';
 
 @Component({
   selector: 'tghv-overview',
@@ -18,8 +19,10 @@ export class OverviewComponent implements OnInit, OnDestroy {
   filteredRepos: Repo[] = [];
   columnHeaders = ['All', 'Unprotected', 'Protected', 'Rescued'];
   currentFilter: string = 'All';
-  private readonly repoService: RepoService = inject(RepoService);
-  private readonly subscription: Subscription = new Subscription();
+  canProtectAll: boolean = false;
+  private readonly repoService = inject(RepoService);
+  private readonly backupService = inject(BackupService);
+  private readonly subscription = new Subscription();
   private readonly protectionStatePipe = new ProtectionStatePipe();
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -56,6 +59,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
                 { ...newRepo, isProtecting: existingRepo.isProtecting } : newRepo;
             });
             this.applyFilter(this.currentFilter);
+            this.updateCanProtectAll();
           }),
         )
         .subscribe(),
@@ -94,5 +98,29 @@ export class OverviewComponent implements OnInit, OnDestroy {
         this.filteredRepos = this.repos;
     }
     this.router.navigate(['/overview', filter]);
+  }
+
+  protectAll(): void {
+    this.repos.forEach((repo) => {
+      if (['Unprotected', 'Partially protected'].includes(this.protectionStatePipe.transform(repo))) {
+        repo.isProtecting = true;
+        this.backupService.protectAll().subscribe(() => {
+          repo.isProtecting = false;
+        }, catchError((err) => {
+          if (err.status === 404) {
+            console.log('Redirecting to auth init URL');
+          }
+          throw err;
+        }));
+      }
+    });
+  }
+
+  private updateCanProtectAll(): void {
+    this.canProtectAll = this.repos.some((repo) =>
+      ['Unprotected', 'Partially protected'].includes(
+        this.protectionStatePipe.transform(repo),
+      ),
+    );
   }
 }

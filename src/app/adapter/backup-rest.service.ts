@@ -1,21 +1,20 @@
 import { inject, Injectable } from '@angular/core';
 import { mergeMap, Observable, take } from 'rxjs';
-import { Repo } from '../model/repo';
-import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 import { HttpSecurityService } from './http-security.service';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-export class RepoRestService {
+export class BackupRestService {
   private readonly http = inject(HttpClient);
   private readonly httpSecurityService = inject(HttpSecurityService);
 
-  public getAll(): Observable<Repo[]> {
+  public protectAll(): Observable<void> {
     return this.httpSecurityService.getHttpOptions().pipe(
       mergeMap((options) =>
-        this.http.get<Repo[]>(environment.apiUrl + '/repo', options),
+        this.http.put<void>(environment.apiUrl + '/backup/all', null, options),
       ),
       take(1),
     );
