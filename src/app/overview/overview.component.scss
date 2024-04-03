@@ -35,6 +35,10 @@
       background-color: #17677c;
     }
 
+    th:not(.selected):hover {
+      background-color: #deefff;
+    }
+
     tr {
       &:first-child th {
         border-top: none;
