@@ -37,15 +37,16 @@ export class OverviewComponent implements OnInit, OnDestroy {
           startWith(0),
           switchMap(() => this.repoService.getAll()), // TODO update the isProtecting values only if the fetch time has been changed
           catchError((err) => {
-            if (err.status === 404) {
-              window.location.href = environment.authInitUrl;
-              return [];
-            } else if (err.status === 401) {
-              this.oidcSecurityService.logoff().subscribe();
-              return [];
-            } else {
-              console.error(err);
-              throw err;
+            switch (err.status) {
+              case 404:
+                window.location.href = environment.authInitUrl;
+                return [];
+              case 401:
+                this.oidcSecurityService.logoff().subscribe();
+                return [];
+              default:
+                console.error(err);
+                throw err;
             }
           }),
           tap((repos) => {
