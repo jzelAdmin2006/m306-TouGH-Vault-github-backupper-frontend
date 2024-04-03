@@ -6,6 +6,7 @@ import { environment } from '../../environments/environment';
 import { interval, Subscription } from 'rxjs';
 import { ProtectionStatePipe } from '../pipe/protection-state.pipe';
 import { ActivatedRoute, Router } from '@angular/router';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({
   selector: 'tghv-overview',
@@ -22,6 +23,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private readonly protectionStatePipe = new ProtectionStatePipe();
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly oidcSecurityService = inject(OidcSecurityService);
   private routeParamsSub: Subscription | undefined;
 
   ngOnInit(): void {
@@ -37,6 +39,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
           catchError((err) => {
             if (err.status === 404) {
               window.location.href = environment.authInitUrl;
+              return [];
+            } else if (err.status === 401) {
+              this.oidcSecurityService.logoff().subscribe();
               return [];
             } else {
               console.error(err);
