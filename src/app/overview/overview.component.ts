@@ -148,7 +148,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
           lastScanTime: new Date(scanInfo.lastScanTime)
         };
         if (scanInfo.scanAllowedAt && !scanInfo.scanAllowed) {
-          this.scheduleScanPermission(scanInfo.scanAllowedAt);
+          this.scheduleScanPermission(this.scanInfo.scanAllowedAt);
         }
       })
     );
