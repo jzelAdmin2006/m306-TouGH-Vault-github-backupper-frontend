@@ -34,64 +34,10 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private scanService = inject(ScanService);
 
   ngOnInit(): void {
-    this.routeParamsSub = this.route.params.subscribe((params) => {
-      const filter = params['filter'] || 'All';
-      this.applyFilter(filter);
-    });
-    this.subscription.add(
-      interval(1000)
-        .pipe(
-          startWith(0),
-          switchMap(() => this.repoService.getAll()),
-          catchError((err) => {
-            switch (err.status) {
-              case 404:
-                window.location.href = environment.authInitUrl;
-                return [];
-              case 401:
-                this.oidcSecurityService.logoff().subscribe();
-                return [];
-              default:
-                console.error(err);
-                throw err;
-            }
-          }),
-          tap((repos) => {
-            this.repos = repos.map((newRepo) => {
-              const existingRepo = this.repos.find(repo => repo.id === newRepo.id);
-              return existingRepo && existingRepo.latestFetch === newRepo.latestFetch ?
-                { ...newRepo, isProtecting: existingRepo.isProtecting } : newRepo;
-            });
-            this.applyFilter(this.currentFilter);
-            this.updateCanProtectAll();
-          }),
-        )
-        .subscribe(),
-    );
-    this.subscription.add(
-      this.scanService.getScanInfo().subscribe((scanInfo) => {
-        this.scanInfo = {
-          ...scanInfo,
-          scanAllowedAt: new Date(scanInfo.scanAllowedAt),
-          lastScanTime: new Date(scanInfo.lastScanTime)
-        };
-        if (scanInfo.scanAllowedAt && !scanInfo.scanAllowed) {
-          this.scheduleScanPermission(scanInfo.scanAllowedAt);
-        }
-      })
-    );
-    const now = new Date();
-    const delayUntilNext5MinuteMark = (5 - now.getMinutes() % 5) * 60000 - now.getSeconds() * 1000
-      - now.getMilliseconds();
-    this.subscription.add(
-      interval(5 * 60 * 1000)
-        .pipe(startWith(0))
-        .subscribe(() => {
-          setTimeout(() => {
-            this.scanInfo!.lastScanTime = new Date();
-          }, delayUntilNext5MinuteMark);
-        }),
-    );
+    this.initialiseFilter();
+    this.updateRepoListEverySec();
+    this.initialiseScanInfo();
+    this.setLastScanTimeOnAutoScans();
   }
 
   ngOnDestroy(): void {
@@ -151,6 +97,78 @@ export class OverviewComponent implements OnInit, OnDestroy {
         this.scheduleScanPermission(in5Min);
       });
     }
+  }
+
+  private initialiseFilter() {
+    this.routeParamsSub = this.route.params.subscribe((params) => {
+      const filter = params['filter'] || 'All';
+      this.applyFilter(filter);
+    });
+  }
+
+  private updateRepoListEverySec() {
+    this.subscription.add(
+      interval(1000)
+        .pipe(
+          startWith(0),
+          switchMap(() => this.repoService.getAll()),
+          catchError((err) => {
+            switch (err.status) {
+              case 404:
+                window.location.href = environment.authInitUrl;
+                return [];
+              case 401:
+                this.oidcSecurityService.logoff().subscribe();
+                return [];
+              default:
+                console.error(err);
+                throw err;
+            }
+          }),
+          tap((repos) => {
+            this.repos = repos.map((newRepo) => {
+              const existingRepo = this.repos.find(repo => repo.id === newRepo.id);
+              return existingRepo && existingRepo.latestFetch === newRepo.latestFetch ?
+                { ...newRepo, isProtecting: existingRepo.isProtecting } : newRepo;
+            });
+            this.applyFilter(this.currentFilter);
+            this.updateCanProtectAll();
+          }),
+        )
+        .subscribe(),
+    );
+  }
+
+  private initialiseScanInfo() {
+    this.subscription.add(
+      this.scanService.getScanInfo().subscribe((scanInfo) => {
+        this.scanInfo = {
+          ...scanInfo,
+          scanAllowedAt: new Date(scanInfo.scanAllowedAt),
+          lastScanTime: new Date(scanInfo.lastScanTime)
+        };
+        if (scanInfo.scanAllowedAt && !scanInfo.scanAllowed) {
+          this.scheduleScanPermission(scanInfo.scanAllowedAt);
+        }
+      })
+    );
+  }
+
+  private setLastScanTimeOnAutoScans() {
+    const now = new Date();
+    const delayUntilNext5MinuteMark = (5 - now.getMinutes() % 5) * 60000 - now.getSeconds() * 1000
+      - now.getMilliseconds();
+    this.subscription.add(
+      interval(5 * 60 * 1000)
+        .pipe(startWith(0))
+        .subscribe(() => {
+          setTimeout(() => {
+            if (this.scanInfo) {
+              this.scanInfo.lastScanTime = new Date();
+            }
+          }, delayUntilNext5MinuteMark);
+        }),
+    );
   }
 
   private scheduleScanPermission(scanAllowedAt: Date) {
