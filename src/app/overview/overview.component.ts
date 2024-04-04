@@ -11,6 +11,7 @@ import { BackupService } from '../model/backup.service';
 import { ScanService } from '../model/scan.service';
 import { ScanInfo } from '../model/scan-info';
 import { Settings } from '../model/settings';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'tghv-overview',
@@ -33,6 +34,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly oidcSecurityService = inject(OidcSecurityService);
+  private readonly snackBar = inject(MatSnackBar);
   private routeParamsSub: Subscription | undefined;
   private scanService = inject(ScanService);
   readonly autoRepoField = (s: Settings) => s.autoRepoUpdate;
@@ -92,16 +94,27 @@ export class OverviewComponent implements OnInit, OnDestroy {
   scanGHChanges() {
     if (this.scanInfo) {
       this.scanInfo.scanAllowed = false;
-      this.scanService.scanGHChanges().subscribe(() => {
-        const now = Date.now();
-        const in5Min = new Date(now + 5 * 60 * 1000);
-        this.scanInfo = {
-          scanAllowed: false,
-          scanAllowedAt: in5Min,
-          lastScanTime: new Date(now)
-        };
-        this.scheduleScanPermission(in5Min);
-        this.updateScanInfoDisplays();
+      this.scanService.scanGHChanges().subscribe({
+        next: () => {
+          const now = Date.now();
+          const in5Min = new Date(now + 5 * 60 * 1000);
+          this.scanInfo = {
+            scanAllowed: false,
+            scanAllowedAt: in5Min,
+            lastScanTime: new Date(now)
+          };
+          this.scheduleScanPermission(in5Min);
+          this.updateScanInfoDisplays();
+        },
+        error: (err) => {
+          console.error(err);
+          this.snackBar.open('Failed to scan for changes, status ' + (err.status > 0 ? err.status : 'n/a'),
+            'Close', {
+              duration: 2000,
+              verticalPosition: 'top',
+              panelClass: 'error-snackbar',
+            });
+        },
       });
     }
   }
@@ -128,7 +141,12 @@ export class OverviewComponent implements OnInit, OnDestroy {
                 this.oidcSecurityService.logoff().subscribe();
                 return [];
               default:
-                console.error(err);
+                this.snackBar.open('Failed to fetch repos, status ' + (err.status > 0 ? err.status : 'n/a'),
+                  'Close', {
+                    duration: 2000,
+                    verticalPosition: 'top',
+                    panelClass: 'error-snackbar',
+                  });
                 throw err;
             }
           }),

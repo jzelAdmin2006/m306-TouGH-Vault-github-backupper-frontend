@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map, mergeMap, Observable, take } from 'rxjs';
 import { HttpOptions } from '../adapter/model';
 import { environment } from '../../environments/environment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'tghv-callback',
@@ -17,6 +18,7 @@ export class CallbackComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly oidcSecurityService = inject(OidcSecurityService);
   private readonly http = inject(HttpClient);
+  private readonly snackBar = inject(MatSnackBar);
 
   ngOnInit(): void {
     const code = this.route.snapshot.queryParamMap.get('code');
@@ -48,6 +50,12 @@ export class CallbackComponent implements OnInit {
               window.location.href = environment.installationUrl;
               break;
           }
+          this.snackBar.open('Token callback failed, status ' + (error.status > 0 ? error.status : 'n/a'),
+            'Close', {
+              duration: 2000,
+              verticalPosition: 'top',
+              panelClass: 'error-snackbar',
+            });
           throw error;
         }),
       )

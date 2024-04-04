@@ -44,12 +44,13 @@ export class SliderSettingComponent implements OnInit {
           panelClass: 'success-snackbar'
         });
       },
-      error: () => {
-        this.snackBar.open('Failed to update setting', 'Close', {
-          duration: 2000,
-          verticalPosition: 'top',
-          panelClass: 'error-snackbar'
-        });
+      error: (err) => {
+        this.snackBar.open('Failed to update setting, status ' + (err.status > 0 ? err.status : 'n/a'),
+            'Close', {
+              duration: 2000,
+              verticalPosition: 'top',
+              panelClass: 'error-snackbar'
+            });
       }
     });
   }
