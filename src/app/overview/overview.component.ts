@@ -80,6 +80,18 @@ export class OverviewComponent implements OnInit, OnDestroy {
         }
       })
     );
+    const now = new Date();
+    const delayUntilNext5MinuteMark = (5 - now.getMinutes() % 5) * 60000 - now.getSeconds() * 1000
+      - now.getMilliseconds();
+    this.subscription.add(
+      interval(5 * 60 * 1000)
+        .pipe(startWith(0))
+        .subscribe(() => {
+          setTimeout(() => {
+            this.scanInfo!.lastScanTime = new Date();
+          }, delayUntilNext5MinuteMark);
+        }),
+    );
   }
 
   ngOnDestroy(): void {
