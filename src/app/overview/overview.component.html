@@ -38,7 +38,8 @@
     </tr>
     <tr *ngFor="let repo of filteredRepos | repoOrdering">
       <td [attr.colspan]="columnHeaders.length">
-        {{ repo.name }} {{ repo | protectionState }}
+        <span class="repo-name">{{ repo.name }}</span>
+        <span class="protection-state">{{ repo | protectionState }}</span>
       </td>
     </tr>
     <tr *ngIf="filteredRepos.length === 0 && repos.length > 0">
