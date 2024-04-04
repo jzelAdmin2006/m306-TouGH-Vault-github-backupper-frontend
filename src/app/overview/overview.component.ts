@@ -88,7 +88,24 @@ export class OverviewComponent implements OnInit, OnDestroy {
         repo.isProtecting = true;
       }
     });
-    this.backupService.protectAll().subscribe();
+    this.backupService.protectAll().subscribe({
+      next: () => {
+        this.snackBar.open('Protection of all repos has been triggered successfully', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          panelClass: 'success-snackbar',
+        });
+        this.updateCanProtectAll();
+      },
+      error: (err) => {
+        this.snackBar.open('Failed to protect all repos, status ' + (err.status > 0 ? err.status : 'n/a'),
+          'Close', {
+            duration: 2000,
+            verticalPosition: 'top',
+            panelClass: 'error-snackbar',
+          });
+      },
+    });
   }
 
   scanGHChanges() {
@@ -96,6 +113,11 @@ export class OverviewComponent implements OnInit, OnDestroy {
       this.scanInfo.scanAllowed = false;
       this.scanService.scanGHChanges().subscribe({
         next: () => {
+          this.snackBar.open('Scan has been triggered successfully', 'Close', {
+            duration: 2000,
+            verticalPosition: 'top',
+            panelClass: 'success-snackbar',
+          });
           const now = Date.now();
           const in5Min = new Date(now + 5 * 60 * 1000);
           this.scanInfo = {
