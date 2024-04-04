@@ -70,7 +70,11 @@ export class OverviewComponent implements OnInit, OnDestroy {
     );
     this.subscription.add(
       this.scanService.getScanInfo().subscribe((scanInfo) => {
-        this.scanInfo = scanInfo;
+        this.scanInfo = {
+          ...scanInfo,
+          scanAllowedAt: new Date(scanInfo.scanAllowedAt),
+          lastScanTime: new Date(scanInfo.lastScanTime)
+        };
         if (scanInfo.scanAllowedAt && !scanInfo.scanAllowed) {
           this.scheduleScanPermission(scanInfo.scanAllowedAt);
         }
@@ -122,8 +126,19 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   scanGHChanges() {
-    this.scanInfo!.scanAllowed = false;
-    this.scanService.scanGHChanges().subscribe(() => this.scheduleScanPermission(new Date(Date.now() + 5 * 60 * 1000)));
+    if (this.scanInfo) {
+      this.scanInfo.scanAllowed = false;
+      this.scanService.scanGHChanges().subscribe(() => {
+        const now = Date.now();
+        const in5Min = new Date(now + 5 * 60 * 1000);
+        this.scanInfo = {
+          scanAllowed: false,
+          scanAllowedAt: in5Min,
+          lastScanTime: new Date(now)
+        };
+        this.scheduleScanPermission(in5Min);
+      });
+    }
   }
 
   private scheduleScanPermission(scanAllowedAt: Date) {
