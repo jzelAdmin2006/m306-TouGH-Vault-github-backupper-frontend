@@ -3,11 +3,15 @@
         class="tough-vault-button" mat-flat-button>
   Protect everything
 </button>
-<button (click)="scanGHChanges()"
-        [disabled]="!scanInfo?.scanAllowed"
-        class="tough-vault-button" mat-flat-button>
-  Scan for changes <br> on GitHub
-</button>
+<div>
+  <button (click)="scanGHChanges()"
+          [disabled]="!scanInfo?.scanAllowed"
+          class="tough-vault-button" mat-flat-button>
+    Scan for changes <br> on GitHub
+  </button>
+  <p>Last scanned: </p> <!-- TODO implement upcounter with format "3min, 4s ago" -->
+  <p *ngIf="!scanInfo?.scanAllowed">Scan allowed in: </p> <!-- TODO implement downcounter with format "2min, 56s" -->
+</div>
 <div class="table-wrapper">
   <table>
     <tr>
