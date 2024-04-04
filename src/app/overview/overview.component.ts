@@ -12,6 +12,7 @@ import { ScanService } from '../model/scan.service';
 import { ScanInfo } from '../model/scan-info';
 import { Settings } from '../model/settings';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SettingsService } from '../model/settings.service';
 
 @Component({
   selector: 'tghv-overview',
@@ -35,8 +36,13 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly oidcSecurityService = inject(OidcSecurityService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly settingsService = inject(SettingsService);
+  private readonly scanService = inject(ScanService);
+
   private routeParamsSub: Subscription | undefined;
-  private scanService = inject(ScanService);
+  private settings: Settings | undefined;
+  private repoDataInitialised = false;
+
   readonly autoRepoField = (s: Settings) => s.autoRepoUpdate;
   readonly autoCommitField = (s: Settings) => s.autoCommitUpdate;
 
@@ -45,6 +51,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
     this.updateRepoListEverySec();
     this.initialiseScanInfo();
     this.setLastScanTimeOnAutoScans();
+    this.settingsService.getSettings().subscribe(settings => this.settings = settings);
     this.subscription.add(interval(1000).subscribe(() => this.updateScanInfoDisplays()));
   }
 
@@ -175,14 +182,25 @@ export class OverviewComponent implements OnInit, OnDestroy {
           tap((repos) => {
             this.repos = repos.map((newRepo) => {
               const existingRepo = this.repos.find(repo => repo.id === newRepo.id);
-              return existingRepo && existingRepo.latestFetch === newRepo.latestFetch ?
-                { ...newRepo, isProtecting: existingRepo.isProtecting } : newRepo;
+              return this.autoBackupUpdateIsTriggered(existingRepo, newRepo) ?
+                { ...newRepo, isProtecting: true }
+                : existingRepo && existingRepo.latestFetch === newRepo.latestFetch ?
+                  { ...newRepo, isProtecting: existingRepo.isProtecting }
+                  : newRepo;
             });
+            this.repoDataInitialised = true;
             this.applyFilter(this.currentFilter);
             this.updateCanProtectAll();
           }),
         )
         .subscribe(),
+    );
+  }
+
+  private autoBackupUpdateIsTriggered(existingRepo: Repo | undefined, newRepo: Repo) {
+    return this.settings && (
+      this.repoDataInitialised && !existingRepo && this.settings.autoRepoUpdate
+      || existingRepo && this.settings.autoCommitUpdate && existingRepo.latestPush != newRepo.latestPush
     );
   }
 
