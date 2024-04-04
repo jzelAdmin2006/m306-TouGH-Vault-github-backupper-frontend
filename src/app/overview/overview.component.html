@@ -41,5 +41,15 @@
         {{ repo.name }} {{ repo | protectionState }}
       </td>
     </tr>
+    <tr *ngIf="filteredRepos.length === 0 && repos.length > 0">
+      <td [attr.colspan]="columnHeaders.length">
+        No repositories found with this filter
+      </td>
+    </tr>
+    <tr *ngIf="repos.length === 0">
+      <td [attr.colspan]="columnHeaders.length">
+        No repositories found (yet 🤔?)
+      </td>
+    </tr>
   </table>
 </div>
