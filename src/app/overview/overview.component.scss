@@ -2,7 +2,7 @@ $tough-vault-blue: #17677c;
 $tough-vault-hover: #ceedf6;
 $tough-vault-disabled: #6b939e;
 
-.table-wrapper {
+.table-container {
   overflow: hidden;
   border-radius: 10px;
   border: 1px solid black;
@@ -55,31 +55,72 @@ $tough-vault-disabled: #6b939e;
   }
 }
 
-.tough-vault-button {
-  background-color: $tough-vault-blue;
-  color: white;
-  border: 1px solid black;
-  border-radius: 10px;
-  padding: 35px 20px;
-  cursor: pointer;
-  font-size: 1.5em;
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
-  &:hover {
-    background-color: $tough-vault-hover;
-    color: black;
-  }
+.global-container {
+  margin: 6em auto;
 
-  &:disabled {
-    background-color: $tough-vault-disabled;
-    color: white;
-    border: none;
-    box-shadow: none;
-  }
+  .global-container-fields {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    flex-wrap: wrap;
+    margin: 0 auto;
 
-  br {
-    content: "";
-    display: block;
-    margin-top: 5px;
+    .buttons-container {
+      .tough-vault-button {
+        background-color: $tough-vault-blue;
+        color: white;
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 35px 20px;
+        cursor: pointer;
+        font-size: 1.5em;
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        margin-bottom: 0.4em;
+        margin-top: 0.4em;
+        width: 12em;
+
+        &:hover {
+          background-color: $tough-vault-hover;
+          color: black;
+        }
+
+        &:disabled {
+          background-color: $tough-vault-disabled;
+          color: white;
+          border: none;
+          box-shadow: none;
+        }
+
+        br {
+          content: "";
+          display: block;
+          margin-top: 5px;
+        }
+      }
+
+      div {
+        position: relative;
+
+        .scan-info {
+          position: absolute;
+          width: 100%;
+          top: 100%;
+          left: 0;
+          margin-top: 0.1em;
+
+          p {
+            margin-bottom: 0.2em;
+          }
+        }
+      }
+
+    }
+
+    > *:not(:last-child) {
+      margin-right: 3em;
+    }
   }
 }
