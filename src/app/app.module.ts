@@ -22,6 +22,7 @@ import { OverviewComponent } from './overview/overview.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProtectionStatePipe } from './pipe/protection-state.pipe';
 import { SliderSettingComponent } from './slider-setting/slider-setting/slider-setting.component';
+import { RepoOrderingPipe } from './pipe/repo-ordering.pipe';
 
 @NgModule({
   declarations: [AppComponent, OverviewComponent],
@@ -45,7 +46,8 @@ import { SliderSettingComponent } from './slider-setting/slider-setting/slider-s
     NgOptimizedImage,
     MatCheckboxModule,
     ProtectionStatePipe,
-    SliderSettingComponent
+    SliderSettingComponent,
+    RepoOrderingPipe
   ],
   providers: [Title],
   bootstrap: [AppComponent],
