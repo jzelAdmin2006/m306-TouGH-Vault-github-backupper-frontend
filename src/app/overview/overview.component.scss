@@ -4,7 +4,7 @@
   overflow: hidden;
   border-radius: 10px;
   border: 1px solid black;
-  width: 60%;
+  width: 50%;
   margin: 0 auto;
 
   table {
@@ -66,9 +66,16 @@
           transform: translateY(-50%);
         }
       }
+
+      .not-found-message {
+        font-size: 1.3em;
+        text-align: center;
+        padding: 1em;
+      }
     }
   }
 }
+
 
 .global-container {
   margin: 6em auto;
