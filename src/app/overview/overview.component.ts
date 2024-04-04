@@ -23,6 +23,8 @@ export class OverviewComponent implements OnInit, OnDestroy {
   currentFilter = 'All';
   canProtectAll = false;
   scanInfo: ScanInfo | undefined;
+  lastScannedDisplay: string = 'unknown time ago';
+  scanAllowedInDisplay: string = 'unknown time';
   private readonly repoService = inject(RepoService);
   private readonly backupService = inject(BackupService);
   private readonly subscription = new Subscription();
@@ -38,6 +40,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
     this.updateRepoListEverySec();
     this.initialiseScanInfo();
     this.setLastScanTimeOnAutoScans();
+    this.subscription.add(interval(1000).subscribe(() => this.updateScanInfoDisplays()));
   }
 
   ngOnDestroy(): void {
@@ -95,6 +98,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
           lastScanTime: new Date(now)
         };
         this.scheduleScanPermission(in5Min);
+        this.updateScanInfoDisplays();
       });
     }
   }
@@ -152,6 +156,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
         if (scanInfo.scanAllowedAt && !scanInfo.scanAllowed) {
           this.scheduleScanPermission(this.scanInfo.scanAllowedAt);
         }
+        this.updateScanInfoDisplays();
       })
     );
   }
@@ -167,6 +172,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
           setTimeout(() => {
             if (this.scanInfo) {
               this.scanInfo.lastScanTime = new Date();
+              this.updateScanInfoDisplays();
             }
           }, delayUntilNext5MinuteMark);
         }),
@@ -177,8 +183,38 @@ export class OverviewComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       if (this.scanInfo) {
         this.scanInfo.scanAllowed = true;
+        this.updateScanInfoDisplays();
       }
     }, scanAllowedAt.getTime() - Date.now());
+  }
+
+  private updateScanInfoDisplays() {
+    if (this.scanInfo) {
+      const now = Date.now();
+      const lastScannedSecondsAgo = Math.round((now - this.scanInfo.lastScanTime.getTime()) / 1000);
+      this.lastScannedDisplay = this.formatTime(lastScannedSecondsAgo, ' ago');
+      if (!this.scanInfo.scanAllowed) {
+        const scanAllowedInSeconds = Math.round((this.scanInfo.scanAllowedAt.getTime() - now) / 1000);
+        this.scanAllowedInDisplay = this.formatTime(scanAllowedInSeconds);
+      }
+    } else {
+      this.lastScannedDisplay = 'unknown time ago';
+      this.scanAllowedInDisplay = 'unknown time';
+    }
+  }
+
+  private formatTime(seconds: number, suffix?: string): string {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    let timeString = '';
+    if (minutes > 0) {
+      timeString += `${minutes}min, `;
+    }
+    timeString += `${remainingSeconds}s`;
+    if (suffix) {
+      timeString += suffix;
+    }
+    return timeString;
   }
 
   private updateCanProtectAll(): void {

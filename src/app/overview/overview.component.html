@@ -9,8 +9,8 @@
           class="tough-vault-button" mat-flat-button>
     Scan for changes <br> on GitHub
   </button>
-  <p>Last scanned: </p> <!-- TODO implement upcounter with format "3min, 4s ago" -->
-  <p *ngIf="!scanInfo?.scanAllowed">Scan allowed in: </p> <!-- TODO implement downcounter with format "2min, 56s" -->
+  <p>Last scanned: {{ lastScannedDisplay }}</p>
+  <p *ngIf="!scanInfo?.scanAllowed">Manual scan allowed in: {{ scanAllowedInDisplay }}</p>
 </div>
 <div class="table-wrapper">
   <table>
