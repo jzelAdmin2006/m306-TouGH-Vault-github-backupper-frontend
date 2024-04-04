@@ -1,0 +1,27 @@
+.container {
+  border: 1px solid black;
+  border-radius: 25px;
+  padding: 10px;
+  margin: 10px;
+  width: 15em;
+  height: 7.5em;
+  align-content: center;
+}
+
+.described-slider {
+  text-align: center;
+
+  .label-active {
+    font-weight: bold;
+  }
+
+  mat-slide-toggle {
+    margin-left: 20px;
+    margin-right: 20px;
+    transform: scale(1.2);
+  }
+}
+
+h3 {
+  text-align: center;
+}

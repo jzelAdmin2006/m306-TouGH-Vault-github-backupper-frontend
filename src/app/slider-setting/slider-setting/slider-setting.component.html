@@ -1,0 +1,8 @@
+<div class="container">
+  <h3>{{ description }}</h3>
+  <div class="described-slider">
+    <span [ngClass]="{'label-active': !isActivated}" class="toggle-label">disabled</span>
+    <mat-slide-toggle (change)="updateSetting()" [ngModel]="isActivated" color="#17677c"></mat-slide-toggle>
+    <span [ngClass]="{'label-active': isActivated}" class="toggle-label">enabled</span>
+  </div>
+</div>

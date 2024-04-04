@@ -12,6 +12,10 @@
   <p>Last scanned: {{ lastScannedDisplay }}</p>
   <p *ngIf="!scanInfo?.scanAllowed">Manual scan allowed in: {{ scanAllowedInDisplay }}</p>
 </div>
+<tghv-slider-setting [settingsField]="autoRepoField" description="Auto backup new repos"
+                     endpoint="/auto-repo-update"/>
+<tghv-slider-setting [settingsField]="autoCommitField" description="Auto update backups with new commits"
+                     endpoint="/auto-commit-update"/>
 <div class="table-wrapper">
   <table>
     <tr>

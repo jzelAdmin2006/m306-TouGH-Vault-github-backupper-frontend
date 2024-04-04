@@ -21,6 +21,7 @@ import { AuthConfigModule } from './auth/auth-config.module';
 import { OverviewComponent } from './overview/overview.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProtectionStatePipe } from './pipe/protection-state.pipe';
+import { SliderSettingComponent } from './slider-setting/slider-setting/slider-setting.component';
 
 @NgModule({
   declarations: [AppComponent, OverviewComponent],
@@ -44,9 +45,11 @@ import { ProtectionStatePipe } from './pipe/protection-state.pipe';
     NgOptimizedImage,
     MatCheckboxModule,
     ProtectionStatePipe,
+    SliderSettingComponent
   ],
   providers: [Title],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule {}
+export class AppModule {
+}

@@ -10,6 +10,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { BackupService } from '../model/backup.service';
 import { ScanService } from '../model/scan.service';
 import { ScanInfo } from '../model/scan-info';
+import { Settings } from '../model/settings';
 
 @Component({
   selector: 'tghv-overview',
@@ -34,6 +35,8 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private readonly oidcSecurityService = inject(OidcSecurityService);
   private routeParamsSub: Subscription | undefined;
   private scanService = inject(ScanService);
+  readonly autoRepoField = (s: Settings) => s.autoRepoUpdate;
+  readonly autoCommitField = (s: Settings) => s.autoCommitUpdate;
 
   ngOnInit(): void {
     this.initialiseFilter();
