@@ -10,7 +10,7 @@ export class ProtectionStatePipe implements PipeTransform {
     string,
     (repo: Repo) => boolean | null
   >([
-    ['Protecting...', (r) => r.isProtecting],
+    ['Protecting...', (r) => r.isProtecting], // TODO consider 'Recovering...' as well according to requirements
     ['Unprotected', (r) => r.latestFetch === null],
     ['Rescued', (r) => r.latestPush === null],
     ['Protected', (r) => r.latestPush === r.latestFetch],
