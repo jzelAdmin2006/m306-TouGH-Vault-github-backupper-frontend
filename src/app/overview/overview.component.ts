@@ -144,6 +144,8 @@ export class OverviewComponent implements OnInit, OnDestroy {
       this.scanService.getScanInfo().subscribe((scanInfo) => {
         this.scanInfo = {
           ...scanInfo,
+          // this might seem not necessary, but it is because of an issue originating from JavaScript because dates are
+          // saved as strings: https://stackoverflow.com/questions/2627650/why-javascript-gettime-is-not-a-function
           scanAllowedAt: new Date(scanInfo.scanAllowedAt),
           lastScanTime: new Date(scanInfo.lastScanTime)
         };
