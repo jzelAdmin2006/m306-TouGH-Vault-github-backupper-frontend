@@ -1,9 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SettingsService } from '../../model/settings.service';
 import { FormsModule } from '@angular/forms';
 import { Settings } from '../../model/settings';
 import { NgClass } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'tghv-slider-setting',
@@ -14,7 +15,8 @@ import { NgClass } from '@angular/common';
     NgClass
   ],
   templateUrl: './slider-setting.component.html',
-  styleUrl: './slider-setting.component.scss'
+  styleUrl: './slider-setting.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class SliderSettingComponent implements OnInit {
   @Input() description!: string;
@@ -24,6 +26,7 @@ export class SliderSettingComponent implements OnInit {
   isActivated = false;
 
   private readonly settingsService = inject(SettingsService);
+  private readonly snackBar: MatSnackBar = inject(MatSnackBar);
 
   ngOnInit(): void {
     this.settingsService.getSettings().subscribe(settings => {
@@ -32,9 +35,22 @@ export class SliderSettingComponent implements OnInit {
   }
 
   updateSetting() {
-    this.settingsService.toggleSetting(this.endpoint).subscribe(settings => {
-      this.isActivated = this.settingsField(settings);
-      alert('Setting updated'); // TODO: replace with snackbar
+    this.settingsService.toggleSetting(this.endpoint).subscribe({
+      next: (settings) => {
+        this.isActivated = this.settingsField(settings);
+        this.snackBar.open('Setting updated successfully', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          panelClass: 'success-snackbar'
+        });
+      },
+      error: () => {
+        this.snackBar.open('Failed to update setting', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          panelClass: 'error-snackbar'
+        });
+      }
     });
   }
 }

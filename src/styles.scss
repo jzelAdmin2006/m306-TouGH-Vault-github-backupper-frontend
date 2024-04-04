@@ -1,1 +1,20 @@
-/* You can add global styles to this file, and also import other style files */
+@import "src/assets/tough-vault-colors";
+
+.success-snackbar {
+  border-radius: 4px;
+  background-color: $tough-vault-blue;
+  --mdc-snackbar-container-color: $tough-vault-blue;
+
+  button {
+    color: white !important;
+  }
+}
+
+.error-snackbar {
+  border-radius: 4px;
+  --mdc-snackbar-container-color: red;
+
+  button {
+    color: white !important;
+  }
+}
