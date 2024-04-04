@@ -39,7 +39,13 @@
     <tr *ngFor="let repo of filteredRepos | repoOrdering">
       <td [attr.colspan]="columnHeaders.length">
         <span class="repo-name">{{ repo.name }}</span>
-        <span class="protection-state">{{ repo | protectionState }}</span>
+        <span [ngClass]="{
+        'protected': (repo | protectionState) === 'Protected',
+        'protecting': (repo | protectionState) === 'Protecting...',
+        'unprotected': (repo | protectionState) === 'Unprotected',
+        'rescued': (repo | protectionState) === 'Rescued',
+        'partially-protected': (repo | protectionState) === 'Partially protected'
+      }" class="protection-state">{{ repo | protectionState }}</span>
       </td>
     </tr>
     <tr *ngIf="filteredRepos.length === 0 && repos.length > 0">
