@@ -19,4 +19,22 @@ export class BackupRestService {
       take(1),
     );
   }
+
+  public protect(repoId: number) {
+    return this.httpSecurityService.getHttpOptions().pipe(
+      mergeMap((options) =>
+        this.http.put<void>(environment.apiUrl + '/backup/' + repoId, null, options),
+      ),
+      take(1),
+    );
+  }
+
+  public unprotect(repoId: number) {
+    return this.httpSecurityService.getHttpOptions().pipe(
+      mergeMap((options) =>
+        this.http.delete<void>(environment.apiUrl + '/backup/' + repoId, options),
+      ),
+      take(1),
+    );
+  }
 }

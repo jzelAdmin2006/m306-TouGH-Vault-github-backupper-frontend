@@ -8,9 +8,10 @@ import { Repo } from '../model/repo';
 export class ProtectionStatePipe implements PipeTransform {
   private static readonly STATES = new Map<
     string,
-    (repo: Repo) => boolean | null
+    (repo: Repo) => boolean | undefined | null
   >([
-    ['Protecting...', (r) => r.isProtecting], // TODO consider 'Recovering...' as well according to requirements
+    ['Protecting...', (r) => r.isProtecting],
+    ['Restoring...', (r) => r.isRestoring],
     ['Unprotected', (r) => r.latestFetch === null],
     ['Rescued', (r) => r.latestPush === null],
     ['Protected', (r) => r.latestPush === r.latestFetch],

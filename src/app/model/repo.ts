@@ -5,4 +5,5 @@ export interface Repo {
   latestPush: Date | null;
   latestFetch: Date | null;
   isProtecting: boolean | null;
+  isRestoring: boolean | undefined | null;
 }

@@ -38,14 +38,38 @@
     </tr>
     <tr *ngFor="let repo of filteredRepos | repoOrdering">
       <td [attr.colspan]="columnHeaders.length">
-        <span class="repo-name">{{ repo.name }}</span>
-        <span [ngClass]="{
-        'protected': (repo | protectionState) === 'Protected',
-        'protecting': (repo | protectionState) === 'Protecting...',
-        'unprotected': (repo | protectionState) === 'Unprotected',
-        'rescued': (repo | protectionState) === 'Rescued',
-        'partially-protected': (repo | protectionState) === 'Partially protected'
-      }" class="protection-state">{{ repo | protectionState }}</span>
+        <div class="repo-details">
+          <span class="repo-name">{{ repo.name }}</span>
+          <div [ngSwitch]="repo | protectionState" class="action-buttons">
+            <button (click)="protect(repo)" *ngSwitchCase="'Unprotected'" class="action-button" mat-flat-button>
+              Protect
+            </button>
+            <button (click)="unprotect(repo)" *ngSwitchCase="'Protected'" class="action-button" mat-flat-button>
+              Unprotect
+            </button>
+            <button (click)="unprotect(repo)" *ngSwitchCase="'Partially protected'" class="action-button"
+                    mat-flat-button>
+              Unprotect
+            </button>
+            <button (click)="protect(repo)" *ngSwitchCase="'Partially protected'" class="action-button" mat-flat-button>
+              Update backup
+            </button>
+            <button (click)="delete(repo)" *ngSwitchCase="'Rescued'" class="action-button dangerous-button"
+                    mat-flat-button>
+              Delete forever
+            </button> <!-- TODO add warning if user is sure -->
+            <button (click)="restore(repo)" *ngSwitchCase="'Rescued'" class="action-button" mat-flat-button>
+              Restore
+            </button>
+          </div>
+          <span [ngClass]="{
+          'protected': (repo | protectionState) === 'Protected',
+          'processing': (repo | protectionState) === 'Protecting...' || (repo | protectionState) === 'Restoring...',
+          'unprotected': (repo | protectionState) === 'Unprotected',
+          'rescued': (repo | protectionState) === 'Rescued',
+          'partially-protected': (repo | protectionState) === 'Partially protected'
+        }" class="protection-state">{{ repo | protectionState }}</span>
+        </div>
       </td>
     </tr>
     <tr *ngIf="filteredRepos.length === 0 && repos.length > 0">

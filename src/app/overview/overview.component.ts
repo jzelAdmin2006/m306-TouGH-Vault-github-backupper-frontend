@@ -148,6 +148,25 @@ export class OverviewComponent implements OnInit, OnDestroy {
     }
   }
 
+  protect(repo: Repo) {
+    this.backupService.protect(repo.id).subscribe(() => repo.isProtecting = true); // TODO add error handling with snackbar
+  }
+
+  unprotect(repo: Repo) {
+    this.backupService.unprotect(repo.id).subscribe(() => repo.latestFetch = null); // TODO add error handling with snackbar
+  }
+
+  restore(repo: Repo) {
+    this.repoService.restore(repo.id).subscribe(() => repo.isRestoring = true); // TODO add error handling with snackbar
+  }
+
+  delete(repo: Repo) {
+    this.repoService.delete(repo.id).subscribe(() => {
+      this.repos = this.repos.filter((r) => r.id !== repo.id);
+      this.applyFilter(this.currentFilter);
+    }); // TODO add error handling with snackbar
+  }
+
   private initialiseFilter() {
     this.routeParamsSub = this.route.params.subscribe((params) => {
       const filter = params['filter'] || 'All';
@@ -182,11 +201,13 @@ export class OverviewComponent implements OnInit, OnDestroy {
           tap((repos) => {
             this.repos = repos.map((newRepo) => {
               const existingRepo = this.repos.find(repo => repo.id === newRepo.id);
-              return this.autoBackupUpdateIsTriggered(existingRepo, newRepo) ?
-                { ...newRepo, isProtecting: true }
-                : existingRepo && existingRepo.latestFetch === newRepo.latestFetch ?
-                  { ...newRepo, isProtecting: existingRepo.isProtecting }
-                  : newRepo;
+              return {
+                ...newRepo,
+                isProtecting: this.autoBackupUpdateIsTriggered(existingRepo, newRepo) ||
+                  (existingRepo && existingRepo.latestFetch === newRepo.latestFetch ?
+                    existingRepo : newRepo).isProtecting,
+                isRestoring: existingRepo && existingRepo.isRestoring && !newRepo.latestPush
+              };
             });
             this.repoDataInitialised = true;
             this.applyFilter(this.currentFilter);

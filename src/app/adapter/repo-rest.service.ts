@@ -20,4 +20,22 @@ export class RepoRestService {
       take(1),
     );
   }
+
+  public restore(repoId: number) {
+    return this.httpSecurityService.getHttpOptions().pipe(
+      mergeMap((options) =>
+        this.http.post<void>(environment.apiUrl + '/repo/' + repoId + '/restore', null, options),
+      ),
+      take(1),
+    );
+  }
+
+  public delete(repoId: number) {
+    return this.httpSecurityService.getHttpOptions().pipe(
+      mergeMap((options) =>
+        this.http.delete<void>(environment.apiUrl + '/repo/' + repoId, options),
+      ),
+      take(1),
+    );
+  }
 }
