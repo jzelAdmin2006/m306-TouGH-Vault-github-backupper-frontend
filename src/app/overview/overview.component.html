@@ -39,7 +39,7 @@
     <tr *ngFor="let repo of filteredRepos | repoOrdering">
       <td [attr.colspan]="columnHeaders.length">
         <div class="repo-details">
-          <span class="repo-name">{{ repo.name }}</span>
+          <span class="repo-name">{{ repo.name }}</span> <!-- TODO add hyperlink to repo -->
           <div [ngSwitch]="repo | protectionState" class="action-buttons">
             <button (click)="protect(repo)" *ngSwitchCase="'Unprotected'" class="action-button" mat-flat-button>
               Protect
