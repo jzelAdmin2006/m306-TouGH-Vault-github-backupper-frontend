@@ -149,22 +149,22 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   protect(repo: Repo) {
-    this.backupService.protect(repo.id).subscribe(() => repo.isProtecting = true); // TODO add error handling with snackbar
+    this.backupService.protect(repo.id).subscribe(() => repo.isProtecting = true); // TODO add success info / error handling with snackbar
   }
 
   unprotect(repo: Repo) {
-    this.backupService.unprotect(repo.id).subscribe(() => repo.latestFetch = null); // TODO add error handling with snackbar
+    this.backupService.unprotect(repo.id).subscribe(() => repo.latestFetch = null); // TODO add success info / error handling with snackbar
   }
 
   restore(repo: Repo) {
-    this.repoService.restore(repo.id).subscribe(() => repo.isRestoring = true); // TODO add error handling with snackbar
+    this.repoService.restore(repo.id).subscribe(() => repo.isRestoring = true); // TODO add success info / error handling with snackbar
   }
 
   delete(repo: Repo) {
     this.repoService.delete(repo.id).subscribe(() => {
       this.repos = this.repos.filter((r) => r.id !== repo.id);
       this.applyFilter(this.currentFilter);
-    }); // TODO add error handling with snackbar
+    }); // TODO add success info / error handling with snackbar
   }
 
   private initialiseFilter() {
