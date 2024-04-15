@@ -44,6 +44,7 @@
             <button (click)="protect(repo)" *ngSwitchCase="'Unprotected'" class="action-button" mat-flat-button>
               Protect
             </button>
+            <!-- TODO extract buttons to component to disable them for a few seconds after they have been clicked -->
             <button (click)="unprotect(repo)" *ngSwitchCase="'Protected'" class="action-button" mat-flat-button>
               Unprotect
             </button>
