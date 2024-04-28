@@ -187,6 +187,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
                 return [];
               case 401:
                 this.oidcSecurityService.logoff().subscribe();
+                window.location.href = environment.homeUrl;
                 return [];
               default:
                 this.snackBar.open('Failed to fetch repos, status ' + (err.status > 0 ? err.status : 'n/a'),
