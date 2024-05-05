@@ -1,41 +1,5 @@
-<div class="global-container">
-  <div class="global-container-fields">
-    <div class="buttons-container">
-      <button (click)="protectAll()"
-              [disabled]="!canProtectAll"
-              class="tough-vault-button" mat-flat-button>
-        Protect everything
-      </button>
-      <div>
-        <button (click)="scanGHChanges()"
-                [disabled]="!scanInfo?.scanAllowed"
-                class="tough-vault-button" mat-flat-button>
-          Scan for changes <br> on GitHub
-        </button>
-        <div class="scan-info">
-          <p>Last scanned: {{ lastScannedDisplay }}</p>
-          <p *ngIf="!scanInfo?.scanAllowed">Manual scan allowed in: {{ scanAllowedInDisplay }}</p>
-        </div>
-      </div>
-    </div>
-    <tghv-slider-setting [settingsField]="autoRepoField" description="Auto backup new repos"
-                         endpoint="/auto-repo-update"/>
-    <tghv-slider-setting [settingsField]="autoCommitField" description="Auto update backups with new commits"
-                         endpoint="/auto-commit-update"/>
-  </div>
-</div>
 <div class="table-container">
   <table>
-    <tr>
-      <th
-        (click)="applyFilter(header)"
-        *ngFor="let header of columnHeaders"
-        [class.selected]="header === currentFilter"
-        [ngStyle]="{ width: 100 / this.columnHeaders.length + '%' }"
-      >
-        {{ header }}
-      </th>
-    </tr>
     <tr *ngFor="let repo of filteredRepos | repoOrdering">
       <td [attr.colspan]="columnHeaders.length">
         <div class="repo-details">
@@ -63,13 +27,6 @@
               Restore
             </button>
           </div>
-          <span [ngClass]="{
-          'protected': (repo | protectionState) === 'Protected',
-          'processing': (repo | protectionState) === 'Protecting...' || (repo | protectionState) === 'Restoring...',
-          'unprotected': (repo | protectionState) === 'Unprotected',
-          'rescued': (repo | protectionState) === 'Rescued',
-          'partially-protected': (repo | protectionState) === 'Partially protected'
-        }" class="protection-state">{{ repo | protectionState }}</span>
         </div>
       </td>
     </tr>
