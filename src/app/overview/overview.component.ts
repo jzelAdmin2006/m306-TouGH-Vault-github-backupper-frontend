@@ -105,9 +105,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
         this.updateCanProtectAll();
       },
       error: (err) => {
-        this.snackBar.open('Failed to protect all repos, status ' + (err.status > 0 ? err.status : 'n/a'),
+        this.snackBar.open(`Failed to protect all repos, status ${err.status > 0 ? err.status : 'n/a'}`,
           'Close', {
-            duration: 2000,
+            duration: 3000,
             verticalPosition: 'top',
             panelClass: 'error-snackbar',
           });
@@ -137,9 +137,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error(err);
-          this.snackBar.open('Failed to scan for changes, status ' + (err.status > 0 ? err.status : 'n/a'),
+          this.snackBar.open(`Failed to scan for changes, status ${err.status > 0 ? err.status : 'n/a'}`,
             'Close', {
-              duration: 2000,
+              duration: 3000,
               verticalPosition: 'top',
               panelClass: 'error-snackbar',
             });
@@ -149,22 +149,92 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   protect(repo: Repo) {
-    this.backupService.protect(repo.id).subscribe(() => repo.isProtecting = true); // TODO add success info / error handling with snackbar
+    this.backupService.protect(repo.id).subscribe({
+      next: () => {
+        this.snackBar.open(`Protection of repo "${repo.name}" has been triggered successfully`, 'Close', {
+          duration: 3000,
+          verticalPosition: 'top',
+          panelClass: 'success-snackbar',
+        });
+        repo.isProtecting = true;
+      },
+      error: (err) => {
+        this.snackBar.open(
+          `Failed to protect repo "${repo.name}", status ${err.status > 0 ? err.status : 'n/a'}`,
+          'Close', {
+            duration: 3000,
+            verticalPosition: 'top',
+            panelClass: 'error-snackbar',
+          });
+      }
+    });
   }
 
   unprotect(repo: Repo) {
-    this.backupService.unprotect(repo.id).subscribe(() => repo.latestFetch = null); // TODO add success info / error handling with snackbar
+    this.backupService.unprotect(repo.id).subscribe({
+      next: () => {
+        this.snackBar.open(`Protection of repo "${repo.name}" has been removed`, 'Close', {
+          duration: 2500,
+          verticalPosition: 'top',
+          panelClass: 'success-snackbar',
+        });
+        repo.latestFetch = null;
+      },
+      error: (err) => {
+        this.snackBar.open(
+          `Failed to unprotect repo "${repo.name}", status ${err.status > 0 ? err.status : 'n/a'}`,
+          'Close', {
+            duration: 3000,
+            verticalPosition: 'top',
+            panelClass: 'error-snackbar',
+          });
+      }
+    });
   }
 
   restore(repo: Repo) {
-    this.repoService.restore(repo.id).subscribe(() => repo.isRestoring = true); // TODO add success info / error handling with snackbar
+    this.repoService.restore(repo.id).subscribe({
+      next: () => {
+        repo.isRestoring = true;
+        this.snackBar.open(`Restoration of repo "${repo.name}" has been triggered successfully`, 'Close', {
+          duration: 3000,
+          verticalPosition: 'top',
+          panelClass: 'success-snackbar',
+        });
+      },
+      error: (err) => {
+        this.snackBar.open(
+          `Failed to restore repo "${repo.name}", status ${err.status > 0 ? err.status : 'n/a'}`,
+          'Close', {
+            duration: 3000,
+            verticalPosition: 'top',
+            panelClass: 'error-snackbar',
+          });
+      }
+    });
   }
 
   delete(repo: Repo) {
-    this.repoService.delete(repo.id).subscribe(() => {
-      this.repos = this.repos.filter((r) => r.id !== repo.id);
-      this.applyFilter(this.currentFilter);
-    }); // TODO add success info / error handling with snackbar
+    this.repoService.delete(repo.id).subscribe({
+      next: () => {
+        this.snackBar.open(`Repo "${repo.name}" has been deleted successfully`, 'Close', {
+          duration: 2500,
+          verticalPosition: 'top',
+          panelClass: 'success-snackbar',
+        });
+        this.repos = this.repos.filter((r) => r.id !== repo.id);
+        this.applyFilter(this.currentFilter);
+      },
+      error: (err) => {
+        this.snackBar.open(
+          `Failed to delete repo "${repo.name}", status ${err.status > 0 ? err.status : 'n/a'}`,
+          'Close', {
+            duration: 3000,
+            verticalPosition: 'top',
+            panelClass: 'error-snackbar',
+          });
+      }
+    });
   }
 
   private initialiseFilter() {
@@ -190,7 +260,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
                 this.oidcSecurityService.logoff().subscribe();
                 return [];
               default:
-                this.snackBar.open('Failed to fetch repos, status ' + (err.status > 0 ? err.status : 'n/a'),
+                this.snackBar.open(`Failed to fetch repos, status ${err.status > 0 ? err.status : 'n/a'}`,
                   'Close', {
                     duration: 2000,
                     verticalPosition: 'top',

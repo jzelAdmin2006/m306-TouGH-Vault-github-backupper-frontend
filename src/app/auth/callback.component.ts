@@ -50,7 +50,7 @@ export class CallbackComponent implements OnInit {
               window.location.href = environment.installationUrl;
               break;
           }
-          this.snackBar.open('Token callback failed, status ' + (error.status > 0 ? error.status : 'n/a'),
+          this.snackBar.open(`Token callback failed, status ${error.status > 0 ? error.status : 'n/a'}`,
             'Close', {
               duration: 2000,
               verticalPosition: 'top',
