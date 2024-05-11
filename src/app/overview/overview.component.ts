@@ -13,6 +13,8 @@ import { ScanInfo } from '../model/scan-info';
 import { Settings } from '../model/settings';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SettingsService } from '../model/settings.service';
+import { WarningComponent } from '../warning/warning.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'tghv-overview',
@@ -45,6 +47,8 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
   readonly autoRepoField = (s: Settings) => s.autoRepoUpdate;
   readonly autoCommitField = (s: Settings) => s.autoCommitUpdate;
+
+  constructor(public warning: MatDialog) {}
 
   ngOnInit(): void {
     this.initialiseFilter();
@@ -251,6 +255,18 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   delete(repo: Repo) {
+    const dialogRef = this.warning.open(WarningComponent, {
+      width: '250px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.proceedWithDeletrion(repo);
+      }
+    });
+  }
+
+  private proceedWithDeletrion(repo: Repo) {
     this.repoService.delete(repo.id).subscribe({
       next: () => {
         this.snackBar.open(
