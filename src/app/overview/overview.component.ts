@@ -13,6 +13,8 @@ import { ScanInfo } from '../model/scan-info';
 import { Settings } from '../model/settings';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SettingsService } from '../model/settings.service';
+import { WarningComponent } from '../warning/warning.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'tghv-overview',
@@ -46,13 +48,19 @@ export class OverviewComponent implements OnInit, OnDestroy {
   readonly autoRepoField = (s: Settings) => s.autoRepoUpdate;
   readonly autoCommitField = (s: Settings) => s.autoCommitUpdate;
 
+  constructor(public warning: MatDialog) {}
+
   ngOnInit(): void {
     this.initialiseFilter();
     this.updateRepoListEverySec();
     this.initialiseScanInfo();
     this.setLastScanTimeOnAutoScans();
-    this.settingsService.getSettings().subscribe(settings => this.settings = settings);
-    this.subscription.add(interval(1000).subscribe(() => this.updateScanInfoDisplays()));
+    this.settingsService
+      .getSettings()
+      .subscribe((settings) => (this.settings = settings));
+    this.subscription.add(
+      interval(1000).subscribe(() => this.updateScanInfoDisplays()),
+    );
   }
 
   ngOnDestroy(): void {
@@ -91,26 +99,37 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
   protectAll(): void {
     this.repos.forEach((repo) => {
-      if (['Unprotected', 'Partially protected'].includes(this.protectionStatePipe.transform(repo))) {
+      if (
+        ['Unprotected', 'Partially protected'].includes(
+          this.protectionStatePipe.transform(repo),
+        )
+      ) {
         repo.isProtecting = true;
       }
     });
     this.backupService.protectAll().subscribe({
       next: () => {
-        this.snackBar.open('Protection of all repos has been triggered successfully', 'Close', {
-          duration: 2000,
-          verticalPosition: 'top',
-          panelClass: 'success-snackbar',
-        });
+        this.snackBar.open(
+          'Protection of all repos has been triggered successfully',
+          'Close',
+          {
+            duration: 2000,
+            verticalPosition: 'top',
+            panelClass: 'success-snackbar',
+          },
+        );
         this.updateCanProtectAll();
       },
       error: (err) => {
-        this.snackBar.open(`Failed to protect all repos, status ${err.status > 0 ? err.status : 'n/a'}`,
-          'Close', {
+        this.snackBar.open(
+          `Failed to protect all repos, status ${err.status > 0 ? err.status : 'n/a'}`,
+          'Close',
+          {
             duration: 3000,
             verticalPosition: 'top',
             panelClass: 'error-snackbar',
-          });
+          },
+        );
       },
     });
   }
@@ -130,19 +149,22 @@ export class OverviewComponent implements OnInit, OnDestroy {
           this.scanInfo = {
             scanAllowed: false,
             scanAllowedAt: in5Min,
-            lastScanTime: new Date(now)
+            lastScanTime: new Date(now),
           };
           this.scheduleScanPermission(in5Min);
           this.updateScanInfoDisplays();
         },
         error: (err) => {
           console.error(err);
-          this.snackBar.open(`Failed to scan for changes, status ${err.status > 0 ? err.status : 'n/a'}`,
-            'Close', {
+          this.snackBar.open(
+            `Failed to scan for changes, status ${err.status > 0 ? err.status : 'n/a'}`,
+            'Close',
+            {
               duration: 3000,
               verticalPosition: 'top',
               panelClass: 'error-snackbar',
-            });
+            },
+          );
         },
       });
     }
@@ -151,44 +173,56 @@ export class OverviewComponent implements OnInit, OnDestroy {
   protect(repo: Repo) {
     this.backupService.protect(repo.id).subscribe({
       next: () => {
-        this.snackBar.open(`Protection of repo "${repo.name}" has been triggered successfully`, 'Close', {
-          duration: 3000,
-          verticalPosition: 'top',
-          panelClass: 'success-snackbar',
-        });
+        this.snackBar.open(
+          `Protection of repo "${repo.name}" has been triggered successfully`,
+          'Close',
+          {
+            duration: 3000,
+            verticalPosition: 'top',
+            panelClass: 'success-snackbar',
+          },
+        );
         repo.isProtecting = true;
       },
       error: (err) => {
         this.snackBar.open(
           `Failed to protect repo "${repo.name}", status ${err.status > 0 ? err.status : 'n/a'}`,
-          'Close', {
+          'Close',
+          {
             duration: 3000,
             verticalPosition: 'top',
             panelClass: 'error-snackbar',
-          });
-      }
+          },
+        );
+      },
     });
   }
 
   unprotect(repo: Repo) {
     this.backupService.unprotect(repo.id).subscribe({
       next: () => {
-        this.snackBar.open(`Protection of repo "${repo.name}" has been removed`, 'Close', {
-          duration: 2500,
-          verticalPosition: 'top',
-          panelClass: 'success-snackbar',
-        });
+        this.snackBar.open(
+          `Protection of repo "${repo.name}" has been removed`,
+          'Close',
+          {
+            duration: 2500,
+            verticalPosition: 'top',
+            panelClass: 'success-snackbar',
+          },
+        );
         repo.latestFetch = null;
       },
       error: (err) => {
         this.snackBar.open(
           `Failed to unprotect repo "${repo.name}", status ${err.status > 0 ? err.status : 'n/a'}`,
-          'Close', {
+          'Close',
+          {
             duration: 3000,
             verticalPosition: 'top',
             panelClass: 'error-snackbar',
-          });
-      }
+          },
+        );
+      },
     });
   }
 
@@ -196,44 +230,68 @@ export class OverviewComponent implements OnInit, OnDestroy {
     this.repoService.restore(repo.id).subscribe({
       next: () => {
         repo.isRestoring = true;
-        this.snackBar.open(`Restoration of repo "${repo.name}" has been triggered successfully`, 'Close', {
-          duration: 3000,
-          verticalPosition: 'top',
-          panelClass: 'success-snackbar',
-        });
+        this.snackBar.open(
+          `Restoration of repo "${repo.name}" has been triggered successfully`,
+          'Close',
+          {
+            duration: 3000,
+            verticalPosition: 'top',
+            panelClass: 'success-snackbar',
+          },
+        );
       },
       error: (err) => {
         this.snackBar.open(
           `Failed to restore repo "${repo.name}", status ${err.status > 0 ? err.status : 'n/a'}`,
-          'Close', {
+          'Close',
+          {
             duration: 3000,
             verticalPosition: 'top',
             panelClass: 'error-snackbar',
-          });
-      }
+          },
+        );
+      },
     });
   }
 
   delete(repo: Repo) {
+    const dialogRef = this.warning.open(WarningComponent, {
+      width: '250px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.proceedWithDeletrion(repo);
+      }
+    });
+  }
+
+  private proceedWithDeletrion(repo: Repo) {
     this.repoService.delete(repo.id).subscribe({
       next: () => {
-        this.snackBar.open(`Repo "${repo.name}" has been deleted successfully`, 'Close', {
-          duration: 2500,
-          verticalPosition: 'top',
-          panelClass: 'success-snackbar',
-        });
+        this.snackBar.open(
+          `Repo "${repo.name}" has been deleted successfully`,
+          'Close',
+          {
+            duration: 2500,
+            verticalPosition: 'top',
+            panelClass: 'success-snackbar',
+          },
+        );
         this.repos = this.repos.filter((r) => r.id !== repo.id);
         this.applyFilter(this.currentFilter);
       },
       error: (err) => {
         this.snackBar.open(
           `Failed to delete repo "${repo.name}", status ${err.status > 0 ? err.status : 'n/a'}`,
-          'Close', {
+          'Close',
+          {
             duration: 3000,
             verticalPosition: 'top',
             panelClass: 'error-snackbar',
-          });
-      }
+          },
+        );
+      },
     });
   }
 
@@ -260,24 +318,36 @@ export class OverviewComponent implements OnInit, OnDestroy {
                 this.oidcSecurityService.logoff().subscribe();
                 return [];
               default:
-                this.snackBar.open(`Failed to fetch repos, status ${err.status > 0 ? err.status : 'n/a'}`,
-                  'Close', {
+                this.snackBar.open(
+                  `Failed to fetch repos, status ${err.status > 0 ? err.status : 'n/a'}`,
+                  'Close',
+                  {
                     duration: 2000,
                     verticalPosition: 'top',
                     panelClass: 'error-snackbar',
-                  });
+                  },
+                );
                 throw err;
             }
           }),
           tap((repos) => {
             this.repos = repos.map((newRepo) => {
-              const existingRepo = this.repos.find(repo => repo.id === newRepo.id);
+              const existingRepo = this.repos.find(
+                (repo) => repo.id === newRepo.id,
+              );
               return {
                 ...newRepo,
-                isProtecting: this.autoBackupUpdateIsTriggered(existingRepo, newRepo) ||
-                  (existingRepo && existingRepo.latestFetch === newRepo.latestFetch ?
-                    existingRepo : newRepo).isProtecting,
-                isRestoring: existingRepo && existingRepo.isRestoring && !newRepo.latestPush
+                isProtecting:
+                  this.autoBackupUpdateIsTriggered(existingRepo, newRepo) ||
+                  (existingRepo &&
+                  existingRepo.latestFetch === newRepo.latestFetch
+                    ? existingRepo
+                    : newRepo
+                  ).isProtecting,
+                isRestoring:
+                  existingRepo &&
+                  existingRepo.isRestoring &&
+                  !newRepo.latestPush,
               };
             });
             this.repoDataInitialised = true;
@@ -289,10 +359,18 @@ export class OverviewComponent implements OnInit, OnDestroy {
     );
   }
 
-  private autoBackupUpdateIsTriggered(existingRepo: Repo | undefined, newRepo: Repo) {
-    return this.settings && (
-      this.repoDataInitialised && !existingRepo && this.settings.autoRepoUpdate
-      || existingRepo && this.settings.autoCommitUpdate && existingRepo.latestPush != newRepo.latestPush
+  private autoBackupUpdateIsTriggered(
+    existingRepo: Repo | undefined,
+    newRepo: Repo,
+  ) {
+    return (
+      this.settings &&
+      ((this.repoDataInitialised &&
+        !existingRepo &&
+        this.settings.autoRepoUpdate) ||
+        (existingRepo &&
+          this.settings.autoCommitUpdate &&
+          existingRepo.latestPush != newRepo.latestPush))
     );
   }
 
@@ -304,20 +382,22 @@ export class OverviewComponent implements OnInit, OnDestroy {
           // this might seem not necessary, but it is because of an issue originating from JavaScript because dates are
           // saved as strings: https://stackoverflow.com/questions/2627650/why-javascript-gettime-is-not-a-function
           scanAllowedAt: new Date(scanInfo.scanAllowedAt),
-          lastScanTime: new Date(scanInfo.lastScanTime)
+          lastScanTime: new Date(scanInfo.lastScanTime),
         };
         if (scanInfo.scanAllowedAt && !scanInfo.scanAllowed) {
           this.scheduleScanPermission(this.scanInfo.scanAllowedAt);
         }
         this.updateScanInfoDisplays();
-      })
+      }),
     );
   }
 
   private setLastScanTimeOnAutoScans() {
     const now = new Date();
-    const delayUntilNext5MinuteMark = (5 - now.getMinutes() % 5) * 60000 - now.getSeconds() * 1000
-      - now.getMilliseconds();
+    const delayUntilNext5MinuteMark =
+      (5 - (now.getMinutes() % 5)) * 60000 -
+      now.getSeconds() * 1000 -
+      now.getMilliseconds();
     this.subscription.add(
       interval(5 * 60 * 1000)
         .pipe(startWith(0))
@@ -344,10 +424,14 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private updateScanInfoDisplays() {
     if (this.scanInfo) {
       const now = Date.now();
-      const lastScannedSecondsAgo = Math.round((now - this.scanInfo.lastScanTime.getTime()) / 1000);
+      const lastScannedSecondsAgo = Math.round(
+        (now - this.scanInfo.lastScanTime.getTime()) / 1000,
+      );
       this.lastScannedDisplay = this.formatTime(lastScannedSecondsAgo, ' ago');
       if (!this.scanInfo.scanAllowed) {
-        const scanAllowedInSeconds = Math.round((this.scanInfo.scanAllowedAt.getTime() - now) / 1000);
+        const scanAllowedInSeconds = Math.round(
+          (this.scanInfo.scanAllowedAt.getTime() - now) / 1000,
+        );
         this.scanAllowedInDisplay = this.formatTime(scanAllowedInSeconds);
       }
     } else {
