@@ -1,0 +1,38 @@
+.warning-container {
+  width: 400px;
+
+  .action-button {
+    border-width: 2px;
+    border-color: black;
+  }
+
+  .button-container {
+    justify-content: space-evenly;
+    width: 400px;
+  }
+
+  .delete-button {
+    background: red;
+    color: white;
+  }
+
+  .cancel-button {
+    background: lightslategray;
+  }
+
+  .icon {
+    width: 50px;
+    height: 50px;
+    margin-top: 25px;
+    margin-left: 5px;
+  }
+
+  .title-div {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .title {
+    width: 300px;
+  }
+}

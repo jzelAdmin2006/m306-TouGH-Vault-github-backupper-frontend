@@ -1,8 +1,14 @@
-<h1 mat-dialog-title>Delete forever</h1>
-<div mat-dialog-content>
-  Are you sure you want to delete this repository forever?
-</div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onConfirm()">Delete</button>
-  <button mat-button (click)="onDismiss()">Cancel</button>
+<div class="warning-container">
+  <div class="title-div">
+    <img src="assets/icons/warning.svg" class="icon">
+    <h1 mat-dialog-title class="title">Are you sure you want to delete this repository?</h1>
+  </div>
+  <div mat-dialog-content>
+    This repository has been deleted from GitHub and rescued by TouGH-Vault. If you delete it now, it will be gone
+    forever!
+  </div>
+  <div mat-dialog-actions class="button-container">
+    <button class="action-button delete-button" mat-button (click)="onConfirm()">Delete</button>
+    <button class="action-button cancel-button" mat-button (click)="onDismiss()">Cancel</button>
+  </div>
 </div>

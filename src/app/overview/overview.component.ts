@@ -255,9 +255,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   delete(repo: Repo) {
-    const dialogRef = this.warning.open(WarningComponent, {
-      width: '250px',
-    });
+    const dialogRef = this.warning.open(WarningComponent, {});
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
