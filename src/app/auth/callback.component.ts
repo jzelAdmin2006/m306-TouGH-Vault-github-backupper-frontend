@@ -6,6 +6,8 @@ import { catchError, map, mergeMap, Observable, take } from 'rxjs';
 import { HttpOptions } from '../adapter/model';
 import { environment } from '../../environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {MatDialog} from "@angular/material/dialog";
+import {CallbackDialogComponent} from "./callback-dialog/callback-dialog.component";
 
 @Component({
   selector: 'tghv-callback',
@@ -19,14 +21,27 @@ export class CallbackComponent implements OnInit {
   private readonly oidcSecurityService = inject(OidcSecurityService);
   private readonly http = inject(HttpClient);
   private readonly snackBar = inject(MatSnackBar);
+  constructor(public dialog: MatDialog) {}
 
+  openDialog() {
+    const dialogRef = this.dialog.open(CallbackDialogComponent, {
+      width: '400px',
+      disableClose: true
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const code = this.route.snapshot.queryParamMap.get('code');
+        if (code) {
+          this.invokeCallback(code);
+        } else {
+          this.sendHome();
+        }
+      }
+    })
+  }
   ngOnInit(): void {
-    const code = this.route.snapshot.queryParamMap.get('code');
-    if (code) {
-      this.invokeCallback(code);
-    } else {
-      this.sendHome();
-    }
+    this.openDialog();
   }
 
   public invokeCallback(code: String): void {
