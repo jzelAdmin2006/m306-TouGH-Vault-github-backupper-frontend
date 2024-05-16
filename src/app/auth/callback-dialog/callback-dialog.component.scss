@@ -3,8 +3,19 @@
   font-size: 16px;
 }
 
-.yes-button {
-  background-color: green;
+.button {
   color: white;
   padding: 0 5px 0 5px;
+}
+
+.button:first-child {
+  margin-right: 5px;
+}
+
+.yes-button {
+  background-color: green;
+}
+
+.cancel-button {
+  background-color: red;
 }

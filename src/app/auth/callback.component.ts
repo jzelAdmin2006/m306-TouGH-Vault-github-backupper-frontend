@@ -37,6 +37,8 @@ export class CallbackComponent implements OnInit {
         } else {
           this.sendHome();
         }
+      } else {
+        this.sendHome()
       }
     })
   }

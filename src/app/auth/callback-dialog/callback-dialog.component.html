@@ -2,5 +2,6 @@
   <p>For authentication purposes, a token will be generated. This token will not expire. Are you sure you want to proceed?</p>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <mat-button-toggle color="primary" (click)="proceed()" class="yes-button">Yes</mat-button-toggle>
+  <mat-button-toggle (click)="proceed(true)" class="yes-button button">Yes</mat-button-toggle>
+  <mat-button-toggle (click)="proceed(false)" class="cancel-button button">No</mat-button-toggle>
 </mat-dialog-actions>

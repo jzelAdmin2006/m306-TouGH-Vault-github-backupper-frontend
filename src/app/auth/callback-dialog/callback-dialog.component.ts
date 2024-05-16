@@ -16,7 +16,7 @@ export class CallbackDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<CallbackDialogComponent>) {}
 
-  proceed(): void {
-    this.dialogRef.close(true);
+  proceed(value: boolean): void {
+    this.dialogRef.close(value);
   }
 }
