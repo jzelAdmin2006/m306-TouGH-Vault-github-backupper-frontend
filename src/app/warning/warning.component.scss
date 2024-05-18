@@ -15,10 +15,18 @@
   .delete-button {
     background: red;
     color: white;
+
+    &:hover {
+      background: #ffa1a1;
+    }
   }
 
   .cancel-button {
     background: lightslategray;
+
+    &:hover {
+      background: #d7d7d7;
+    }
   }
 
   .icon {
