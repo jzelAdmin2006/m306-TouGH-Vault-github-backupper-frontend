@@ -6,4 +6,5 @@ export interface Repo {
   latestFetch: Date | null;
   isProtecting: boolean | null;
   isRestoring: boolean | undefined | null;
+  isPrivate: boolean;
 }
