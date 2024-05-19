@@ -1,11 +1,6 @@
 <div class="global-container">
   <div class="global-container-fields">
     <div class="buttons-container">
-      <button (click)="protectAll()"
-              [disabled]="!canProtectAll"
-              class="tough-vault-button" mat-flat-button>
-        Protect everything
-      </button>
       <div>
         <button (click)="scanGHChanges()"
                 [disabled]="!scanInfo?.scanAllowed"
@@ -26,25 +21,10 @@
 </div>
 <div class="table-container">
   <table>
-    <tr>
-      <th
-        (click)="applyFilter(header)"
-        *ngFor="let header of columnHeaders"
-        [class.selected]="header === currentFilter"
-        [ngStyle]="{ width: 100 / this.columnHeaders.length + '%' }"
-      >
-        {{ header }}
-      </th>
-    </tr>
     <tr *ngFor="let repo of filteredRepos | repoOrdering">
       <td [attr.colspan]="columnHeaders.length">
         <div class="repo-details">
-          <span *ngIf="(repo | protectionState) === 'Rescued'; else nonRescued" class="repo-name">{{ repo.name }}</span>
-          <ng-template #nonRescued>
-            <a [href]="'https://github.com/' + repo.name" target="_blank">
-              <span class="repo-name">{{ repo.name }}</span>
-            </a>
-          </ng-template>
+          <span class="repo-name">{{ repo.name }}</span>
           <div [ngSwitch]="repo | protectionState" class="action-buttons">
             <button (click)="protect(repo)" *ngSwitchCase="'Unprotected'" class="action-button" mat-flat-button>
               Protect
@@ -68,13 +48,7 @@
               Restore
             </button>
           </div>
-          <span [ngClass]="{
-          'protected': (repo | protectionState) === 'Protected',
-          'processing': (repo | protectionState) === 'Protecting...' || (repo | protectionState) === 'Restoring...',
-          'unprotected': (repo | protectionState) === 'Unprotected',
-          'rescued': (repo | protectionState) === 'Rescued',
-          'partially-protected': (repo | protectionState) === 'Partially protected'
-        }" class="protection-state">{{ repo | protectionState }}</span>
+          <span class="protection-state">Status (Platzhalter)</span>
         </div>
       </td>
     </tr>
