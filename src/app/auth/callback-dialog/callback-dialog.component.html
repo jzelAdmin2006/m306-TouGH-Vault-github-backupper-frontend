@@ -1,7 +1,13 @@
-<mat-dialog-content class="content">
-  <p>For authentication purposes, a token will be generated. This token will not expire. Are you sure you want to proceed?</p>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <mat-button-toggle (click)="proceed(true)" class="yes-button button">Yes</mat-button-toggle>
-  <mat-button-toggle (click)="proceed(false)" class="cancel-button button">No</mat-button-toggle>
-</mat-dialog-actions>
+<div class="dialog-container">
+  <div class="title-div">
+    <img alt="warning symbol" class="icon" src="assets/icons/warning.svg">
+    <h1 class="title" mat-dialog-title>Are you sure you want to create a token?</h1>
+  </div>
+  <mat-dialog-content class="content">
+    <p>For authentication purposes, a token will be generated. This token will not expire. Are you sure you want to proceed?</p>
+  </mat-dialog-content>
+  <mat-dialog-actions class="button-container">
+    <mat-button-toggle (click)="proceed(true)" class="action-button cancel-button">Yes</mat-button-toggle>
+    <mat-button-toggle (click)="proceed(false)" class="action-button delete-button">No</mat-button-toggle>
+  </mat-dialog-actions>
+</div>

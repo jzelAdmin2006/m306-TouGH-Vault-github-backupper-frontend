@@ -1,5 +1,12 @@
 import { Component, Inject } from '@angular/core';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogContent, MatDialogActions} from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialogContent,
+  MatDialogActions,
+  MatDialogTitle
+} from '@angular/material/dialog';
 import {MatButtonToggle} from "@angular/material/button-toggle";
 @Component({
   selector: 'tghv-callback-dialog',
@@ -7,7 +14,8 @@ import {MatButtonToggle} from "@angular/material/button-toggle";
   imports: [
     MatDialogContent,
     MatDialogActions,
-    MatButtonToggle
+    MatButtonToggle,
+    MatDialogTitle
   ],
   templateUrl: './callback-dialog.component.html',
   styleUrl: './callback-dialog.component.scss'
