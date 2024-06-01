@@ -372,6 +372,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
         (existingRepo &&
           this.settings.autoCommitUpdate &&
           existingRepo.latestFetch && newRepo.latestFetch &&
+          existingRepo.latestPush && newRepo.latestPush &&
           existingRepo.latestFetch === newRepo.latestFetch &&
           existingRepo.latestFetch != newRepo.latestPush))
     );
