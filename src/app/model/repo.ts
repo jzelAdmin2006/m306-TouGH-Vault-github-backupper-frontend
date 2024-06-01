@@ -4,7 +4,7 @@ export interface Repo {
   volumeLocation: string;
   latestPush: Date | null;
   latestFetch: Date | null;
-  isProtecting: boolean | null;
+  isProtecting: boolean | undefined | null;
   isRestoring: boolean | undefined | null;
   isPrivate: boolean;
 }

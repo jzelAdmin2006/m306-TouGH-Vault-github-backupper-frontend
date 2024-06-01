@@ -339,12 +339,12 @@ export class OverviewComponent implements OnInit, OnDestroy {
               return {
                 ...newRepo,
                 isProtecting:
-                  this.autoBackupUpdateIsTriggered(existingRepo, newRepo) ||
-                  (existingRepo &&
-                    existingRepo.latestFetch === newRepo.latestFetch
-                      ? existingRepo
-                      : newRepo
-                  ).isProtecting,
+                  existingRepo &&
+                  existingRepo.latestFetch === newRepo.latestFetch &&
+                  existingRepo.latestPush === newRepo.latestPush
+                    ? existingRepo.isProtecting
+                    : newRepo.latestPush !== newRepo.latestFetch && this.autoBackupUpdateIsTriggered(existingRepo,
+                    newRepo),
                 isRestoring:
                   existingRepo &&
                   existingRepo.isRestoring &&
