@@ -40,6 +40,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private readonly snackBar = inject(MatSnackBar);
   private readonly settingsService = inject(SettingsService);
   private readonly scanService = inject(ScanService);
+  private readonly warning = inject(MatDialog);
 
   private routeParamsSub: Subscription | undefined;
   private settings: Settings | undefined;
@@ -47,8 +48,6 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
   readonly autoRepoField = (s: Settings) => s.autoRepoUpdate;
   readonly autoCommitField = (s: Settings) => s.autoCommitUpdate;
-
-  constructor(public warning: MatDialog) {}
 
   ngOnInit(): void {
     this.initialiseFilter();
@@ -153,6 +152,10 @@ export class OverviewComponent implements OnInit, OnDestroy {
           };
           this.scheduleScanPermission(in5Min);
           this.updateScanInfoDisplays();
+          this.scanService.getScanInfo().subscribe((scanInfo) => {
+            this.scanInfo = this.parseScanInfo(scanInfo);
+            this.updateScanInfoDisplays();
+          });
         },
         error: (err) => {
           console.error(err);
@@ -338,9 +341,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
                 isProtecting:
                   this.autoBackupUpdateIsTriggered(existingRepo, newRepo) ||
                   (existingRepo &&
-                  existingRepo.latestFetch === newRepo.latestFetch
-                    ? existingRepo
-                    : newRepo
+                    existingRepo.latestFetch === newRepo.latestFetch
+                      ? existingRepo
+                      : newRepo
                   ).isProtecting,
                 isRestoring:
                   existingRepo &&
@@ -364,8 +367,8 @@ export class OverviewComponent implements OnInit, OnDestroy {
     return (
       this.settings &&
       ((this.repoDataInitialised &&
-        !existingRepo &&
-        this.settings.autoRepoUpdate) ||
+          !existingRepo &&
+          this.settings.autoRepoUpdate) ||
         (existingRepo &&
           this.settings.autoCommitUpdate &&
           existingRepo.latestPush != newRepo.latestPush))
@@ -375,19 +378,23 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private initialiseScanInfo() {
     this.subscription.add(
       this.scanService.getScanInfo().subscribe((scanInfo) => {
-        this.scanInfo = {
-          ...scanInfo,
-          // this might seem not necessary, but it is because of an issue originating from JavaScript because dates are
-          // saved as strings: https://stackoverflow.com/questions/2627650/why-javascript-gettime-is-not-a-function
-          scanAllowedAt: new Date(scanInfo.scanAllowedAt),
-          lastScanTime: new Date(scanInfo.lastScanTime),
-        };
+        this.scanInfo = this.parseScanInfo(scanInfo);
         if (scanInfo.scanAllowedAt && !scanInfo.scanAllowed) {
           this.scheduleScanPermission(this.scanInfo.scanAllowedAt);
         }
         this.updateScanInfoDisplays();
       }),
     );
+  }
+
+  private parseScanInfo(scanInfo: ScanInfo) {
+    return {
+      ...scanInfo,
+      // this might seem not necessary, but it is because of an issue originating from JavaScript because dates are
+      // saved as strings: https://stackoverflow.com/questions/2627650/why-javascript-gettime-is-not-a-function
+      scanAllowedAt: new Date(scanInfo.scanAllowedAt),
+      lastScanTime: new Date(scanInfo.lastScanTime),
+    };
   }
 
   private setLastScanTimeOnAutoScans() {
