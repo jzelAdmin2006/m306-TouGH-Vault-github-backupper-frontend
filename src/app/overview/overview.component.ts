@@ -75,7 +75,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
         break;
       case 'Unprotected':
         this.filteredRepos = this.repos.filter((repo) =>
-          ['Unprotected', 'Partially protected'].includes(
+          ['Unprotected', 'Partially protected', 'Protecting...'].includes(
             this.protectionStatePipe.transform(repo),
           ),
         );
@@ -87,7 +87,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
         break;
       case 'Rescued':
         this.filteredRepos = this.repos.filter(
-          (repo) => this.protectionStatePipe.transform(repo) === 'Rescued',
+          (repo) => ['Rescued', 'Restoring...'].includes(
+            this.protectionStatePipe.transform(repo),
+          ),
         );
         break;
       default:
