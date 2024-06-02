@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SettingsService } from '../../model/settings.service';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +22,7 @@ export class SliderSettingComponent implements OnInit {
   @Input() description!: string;
   @Input() endpoint!: string;
   @Input() settingsField!: (settings: Settings) => boolean;
+  @Output() valueChange = new EventEmitter<boolean>();
 
   isActivated = false;
 
@@ -35,9 +36,11 @@ export class SliderSettingComponent implements OnInit {
   }
 
   updateSetting() {
+    this.valueChange.emit(!this.isActivated);
     this.settingsService.toggleSetting(this.endpoint).subscribe({
       next: (settings) => {
         this.isActivated = this.settingsField(settings);
+        this.valueChange.emit(this.isActivated);
         this.snackBar.open('Setting updated successfully', 'Close', {
           duration: 2000,
           verticalPosition: 'top',

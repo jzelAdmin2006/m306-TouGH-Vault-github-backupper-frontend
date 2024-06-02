@@ -18,9 +18,12 @@
         </div>
       </div>
     </div>
-    <tghv-slider-setting [settingsField]="autoRepoField" description="Auto backup new repos"
+    <tghv-slider-setting (valueChange)="updateAutoRepoSetting($event)"
+                         [settingsField]="autoRepoField"
+                         description="Auto backup new repos"
                          endpoint="/auto-repo-update"/>
-    <tghv-slider-setting [settingsField]="autoCommitField" description="Auto update backups with new commits"
+    <tghv-slider-setting (valueChange)="updateAutoCommitSetting($event)" [settingsField]="autoCommitField"
+                         description="Auto update backups with new commits"
                          endpoint="/auto-commit-update"/>
   </div>
 </div>

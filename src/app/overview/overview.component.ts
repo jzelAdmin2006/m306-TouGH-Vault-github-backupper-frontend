@@ -67,6 +67,22 @@ export class OverviewComponent implements OnInit, OnDestroy {
     this.routeParamsSub?.unsubscribe();
   }
 
+  updateAutoRepoSetting(newValue: boolean): void {
+    if (this.settings) {
+      this.settings.autoRepoUpdate = newValue;
+    } else {
+      this.settings = { autoRepoUpdate: newValue, autoCommitUpdate: false };
+    }
+  }
+
+  updateAutoCommitSetting(newValue: boolean): void {
+    if (this.settings) {
+      this.settings.autoCommitUpdate = newValue;
+    } else {
+      this.settings = { autoRepoUpdate: false, autoCommitUpdate: newValue };
+    }
+  }
+
   applyFilter(filter: string): void {
     this.currentFilter = filter;
     switch (filter) {
