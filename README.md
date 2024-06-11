@@ -1,5 +1,7 @@
 # M306TouGHVaultGithubBackupperFrontend
 
+![image](https://github.com/jzelAdmin2006/m306-TouGH-Vault-github-backupper-frontend/assets/112761658/6fa68a12-6e38-471b-a3e6-b7d38318485b)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.2.1.
 
 ## Development server
